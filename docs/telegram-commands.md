@@ -50,8 +50,13 @@ Available to users listed in `ADMIN_TELEGRAM_IDS` environment variable:
 
 | Command | Description |
 |---------|-------------|
-| `/admin_sync` | Manually trigger fixture and group sync |
-| `/admin_update` | Manually trigger match status updates |
-| `/admin_score` | Manually trigger scoring calculation |
+| `/admin_fetch_new_fixtures` | Fetch and sync new fixtures from API (expensive API operation) |
+| `/admin_refresh_matches_statuses` | Update live match statuses and scores (expensive API operation) |
+| `/admin_calculate_user_points` | Calculate and update user points for finished matches |
+
+### Admin Button Actions
+- 🤖 Fetch New Fixtures
+- 🤖 Refresh Match Statuses
+- 🤖 Calculate User Points
 
 **Note**: Admin commands can trigger expensive API operations. Only add trusted users to the admin list.

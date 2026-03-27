@@ -22,9 +22,9 @@ interface Config {
     logLevel: string;
   };
   jobs: {
-    fixtureSyncCron: string;
-    matchUpdateCron: string;
-    scoringCron: string;
+    fetchNewFixturesCron: string;
+    refreshMatchesStatusesCron: string;
+    calculateUserPointsCron: string;
   };
   leagues: {
     defaultLeagueIds: string[];
@@ -85,9 +85,9 @@ export const config: Config = {
     logLevel: getEnv('LOG_LEVEL', 'info'),
   },
   jobs: {
-    fixtureSyncCron: getEnv('FIXTURE_SYNC_CRON', '0 */6 * * *'),
-    matchUpdateCron: getEnv('MATCH_UPDATE_CRON', '*/5 * * * *'),
-    scoringCron: getEnv('SCORING_CRON', '*/10 * * * *'),
+    fetchNewFixturesCron: getEnv('FETCH_NEW_FIXTURES_CRON', '0 */6 * * *'),
+    refreshMatchesStatusesCron: getEnv('REFRESH_MATCHES_STATUSES_CRON', '*/5 * * * *'),
+    calculateUserPointsCron: getEnv('CALCULATE_USER_POINTS_CRON', '*/10 * * * *'),
   },
   leagues: {
     defaultLeagueIds: getEnvArray('DEFAULT_LEAGUE_IDS', ['PL', 'PD', 'CL']),

@@ -3,6 +3,7 @@ import { db } from './db/database';
 import { runMigrations } from './db/migrate';
 import { telegramBot } from './bot';
 import { jobScheduler } from './jobs/scheduler';
+import { fixtureSyncJob } from './jobs/fixture-sync.job';
 
 async function bootstrap() {
   try {
@@ -19,11 +20,16 @@ async function bootstrap() {
     logger.info('Running database migrations...');
     await runMigrations();
 
+    // Run initial fixture sync to ensure matches are available
+    logger.info('Running initial fixture sync...');
+    await fixtureSyncJob.run();
+    logger.info('Fixture sync completed - matches are now available');
+
     // Launch Telegram bot
     logger.info('Launching Telegram bot...');
     await telegramBot.launch();
 
-    // Start job scheduler
+    // Start job scheduler (which will handle periodic updates)
     logger.info('Starting job scheduler...');
     jobScheduler.start();
 

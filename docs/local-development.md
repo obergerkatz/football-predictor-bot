@@ -92,9 +92,9 @@ NODE_ENV=development
 LOG_LEVEL=info
 
 # Background Jobs (optional, defaults shown)
-FIXTURE_SYNC_CRON=0 */6 * * *
-MATCH_UPDATE_CRON=*/5 * * * *
-SCORING_CRON=*/10 * * * *
+FETCH_NEW_FIXTURES_CRON=0 */6 * * *
+REFRESH_MATCHES_STATUSES_CRON=*/5 * * * *
+CALCULATE_USER_POINTS_CRON=*/10 * * * *
 
 # Competition
 DEFAULT_LEAGUE_IDS=WC

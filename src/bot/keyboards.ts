@@ -15,8 +15,8 @@ export function createMainMenuKeyboard(isAdmin: boolean = false): {
 
   // Add admin buttons if user is admin
   if (isAdmin) {
-    keyboard.push([{ text: '🤖 Admin: Sync Fixtures' }, { text: '🤖 Admin: Update Matches' }]);
-    keyboard.push([{ text: '🤖 Admin: Run Scoring' }]);
+    keyboard.push([{ text: '🤖 Fetch New Fixtures' }, { text: '🤖 Refresh Match Statuses' }]);
+    keyboard.push([{ text: '🤖 Calculate User Points' }]);
   }
 
   return {

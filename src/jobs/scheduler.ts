@@ -11,60 +11,54 @@ export class JobScheduler {
   start(): void {
     logger.info('Starting job scheduler');
 
-    // Fixture sync job (default: every 6 hours)
-    const fixtureSyncCron = cron.schedule(
-      config.jobs.fixtureSyncCron,
+    // Fetch new fixtures job (default: every 6 hours)
+    const fetchNewFixturesCron = cron.schedule(
+      config.jobs.fetchNewFixturesCron,
       async () => {
         try {
           await fixtureSyncJob.run();
         } catch (error) {
-          logger.error('Fixture sync job error', { error });
+          logger.error('Fetch new fixtures job error', { error });
         }
       },
       { scheduled: false }
     );
 
-    // Match update job (default: every 5 minutes)
-    const matchUpdateCron = cron.schedule(
-      config.jobs.matchUpdateCron,
+    // Refresh match statuses job (default: every 5 minutes)
+    const refreshMatchesStatusesCron = cron.schedule(
+      config.jobs.refreshMatchesStatusesCron,
       async () => {
         try {
           await matchUpdateJob.run();
         } catch (error) {
-          logger.error('Match update job error', { error });
+          logger.error('Refresh match statuses job error', { error });
         }
       },
       { scheduled: false }
     );
 
-    // Scoring job (default: every 10 minutes)
-    const scoringCron = cron.schedule(
-      config.jobs.scoringCron,
+    // Calculate user points job (default: every 10 minutes)
+    const calculateUserPointsCron = cron.schedule(
+      config.jobs.calculateUserPointsCron,
       async () => {
         try {
           await scoringJob.run();
         } catch (error) {
-          logger.error('Scoring job error', { error });
+          logger.error('Calculate user points job error', { error });
         }
       },
       { scheduled: false }
     );
 
-    this.jobs = [fixtureSyncCron, matchUpdateCron, scoringCron];
+    this.jobs = [fetchNewFixturesCron, refreshMatchesStatusesCron, calculateUserPointsCron];
 
     // Start all jobs
     this.jobs.forEach((job) => job.start());
 
     logger.info('Job scheduler started', {
-      fixtureSyncCron: config.jobs.fixtureSyncCron,
-      matchUpdateCron: config.jobs.matchUpdateCron,
-      scoringCron: config.jobs.scoringCron,
-    });
-
-    // Run initial sync on startup
-    logger.info('Running initial fixture sync');
-    fixtureSyncJob.run().catch((error) => {
-      logger.error('Initial fixture sync failed', { error });
+      fetchNewFixturesCron: config.jobs.fetchNewFixturesCron,
+      refreshMatchesStatusesCron: config.jobs.refreshMatchesStatusesCron,
+      calculateUserPointsCron: config.jobs.calculateUserPointsCron,
     });
   }
 

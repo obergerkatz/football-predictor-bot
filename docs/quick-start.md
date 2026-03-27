@@ -5,7 +5,7 @@
 ### 1. Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/obergerkatz/football-predictor-bot.git
 cd football-predictor-bot
 ```
 

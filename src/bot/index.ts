@@ -38,7 +38,11 @@ import {
   handleGroupPredictionClose,
   handleGroupPredictionBack,
 } from './handlers/group-stage-prediction.handler';
-import { handleAdminSync, handleAdminUpdate, handleAdminScore } from './handlers/admin.handler';
+import {
+  handleAdminFetchNewFixtures,
+  handleAdminRefreshMatchesStatuses,
+  handleAdminCalculateUserPoints,
+} from './handlers/admin.handler';
 
 export class TelegramBot {
   private bot: Telegraf;
@@ -63,9 +67,9 @@ export class TelegramBot {
     this.bot.command('group_stage', handleGroupStagePrediction);
 
     // Admin commands
-    this.bot.command('admin_sync', handleAdminSync);
-    this.bot.command('admin_update', handleAdminUpdate);
-    this.bot.command('admin_score', handleAdminScore);
+    this.bot.command('admin_fetch_new_fixtures', handleAdminFetchNewFixtures);
+    this.bot.command('admin_refresh_matches_statuses', handleAdminRefreshMatchesStatuses);
+    this.bot.command('admin_calculate_user_points', handleAdminCalculateUserPoints);
 
     // Button text handlers (same as commands)
     this.bot.hears('🗓️ Today Matches', handleTodayMatches);
@@ -79,9 +83,9 @@ export class TelegramBot {
     this.bot.hears('❓ Help', handleHelp);
 
     // Admin button handlers
-    this.bot.hears('🤖 Admin: Sync Fixtures', handleAdminSync);
-    this.bot.hears('🤖 Admin: Update Matches', handleAdminUpdate);
-    this.bot.hears('🤖 Admin: Run Scoring', handleAdminScore);
+    this.bot.hears('🤖 Fetch New Fixtures', handleAdminFetchNewFixtures);
+    this.bot.hears('🤖 Refresh Match Statuses', handleAdminRefreshMatchesStatuses);
+    this.bot.hears('🤖 Calculate User Points', handleAdminCalculateUserPoints);
 
     // Callback query handlers
     this.bot.action(/^bet_\d+$/, handleBetCallback);
