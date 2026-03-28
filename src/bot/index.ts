@@ -39,7 +39,7 @@ import {
   handleGroupPredictionBack,
 } from './handlers/group-stage-prediction.handler';
 import {
-  handleAdminFetchNewFixtures,
+  handleAdminFetchNewMatches,
   handleAdminRefreshMatchesStatuses,
   handleAdminCalculateUserPoints,
   handleAdminSendPreMatchNotifications,
@@ -69,7 +69,7 @@ export class TelegramBot {
     this.bot.command('group_stage', handleGroupStagePrediction);
 
     // Admin commands
-    this.bot.command('admin_fetch_new_fixtures', handleAdminFetchNewFixtures);
+    this.bot.command('admin_fetch_new_matches', handleAdminFetchNewMatches);
     this.bot.command('admin_refresh_matches_statuses', handleAdminRefreshMatchesStatuses);
     this.bot.command('admin_calculate_user_points', handleAdminCalculateUserPoints);
     this.bot.command('admin_send_pre_match_notifications', handleAdminSendPreMatchNotifications);
@@ -87,7 +87,7 @@ export class TelegramBot {
     this.bot.hears('❓ Help', handleHelp);
 
     // Admin button handlers
-    this.bot.hears('🤖 Fetch New Fixtures', handleAdminFetchNewFixtures);
+    this.bot.hears('🤖 Fetch New Matches', handleAdminFetchNewMatches);
     this.bot.hears('🤖 Refresh Match Statuses', handleAdminRefreshMatchesStatuses);
     this.bot.hears('🤖 Calculate User Points', handleAdminCalculateUserPoints);
     this.bot.hears('🤖 Send Pre-Match Notifications', handleAdminSendPreMatchNotifications);

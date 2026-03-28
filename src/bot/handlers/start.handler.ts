@@ -110,7 +110,7 @@ export async function handleHelp(ctx: Context): Promise<void> {
       helpMessage +=
         `🤖 ADMIN TOOLS\n` +
         `━━━━━━━━━━━━━━━━━━━━\n` +
-        `🤖 Fetch New Fixtures\n` +
+        `🤖 Fetch New Matches\n` +
         `   Fetch and sync new matches from API\n\n` +
         `🤖 Refresh Match Statuses\n` +
         `   Update live match statuses and scores\n\n` +
