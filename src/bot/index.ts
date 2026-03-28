@@ -42,6 +42,8 @@ import {
   handleAdminFetchNewFixtures,
   handleAdminRefreshMatchesStatuses,
   handleAdminCalculateUserPoints,
+  handleAdminSendPreMatchNotifications,
+  handleAdminSendPostMatchNotifications,
 } from './handlers/admin.handler';
 
 export class TelegramBot {
@@ -70,6 +72,8 @@ export class TelegramBot {
     this.bot.command('admin_fetch_new_fixtures', handleAdminFetchNewFixtures);
     this.bot.command('admin_refresh_matches_statuses', handleAdminRefreshMatchesStatuses);
     this.bot.command('admin_calculate_user_points', handleAdminCalculateUserPoints);
+    this.bot.command('admin_send_pre_match_notifications', handleAdminSendPreMatchNotifications);
+    this.bot.command('admin_send_post_match_notifications', handleAdminSendPostMatchNotifications);
 
     // Button text handlers (same as commands)
     this.bot.hears('🗓️ Today Matches', handleTodayMatches);
@@ -86,6 +90,8 @@ export class TelegramBot {
     this.bot.hears('🤖 Fetch New Fixtures', handleAdminFetchNewFixtures);
     this.bot.hears('🤖 Refresh Match Statuses', handleAdminRefreshMatchesStatuses);
     this.bot.hears('🤖 Calculate User Points', handleAdminCalculateUserPoints);
+    this.bot.hears('🤖 Send Pre-Match Notifications', handleAdminSendPreMatchNotifications);
+    this.bot.hears('🤖 Send Post-Match Notifications', handleAdminSendPostMatchNotifications);
 
     // Callback query handlers
     this.bot.action(/^bet_\d+$/, handleBetCallback);

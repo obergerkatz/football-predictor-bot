@@ -115,7 +115,11 @@ export async function handleHelp(ctx: Context): Promise<void> {
         `🤖 Refresh Match Statuses\n` +
         `   Update live match statuses and scores\n\n` +
         `🤖 Calculate User Points\n` +
-        `   Calculate points for finished matches\n\n`;
+        `   Calculate points for finished matches\n\n` +
+        `🤖 Send Pre-Match Notifications\n` +
+        `   Send reminders for upcoming matches\n\n` +
+        `🤖 Send Post-Match Notifications\n` +
+        `   Send points earned for finished matches\n\n`;
     }
 
     helpMessage +=

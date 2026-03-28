@@ -17,6 +17,7 @@ graph TB
         TournamentSvc[Tournament Prediction Service]
         GroupStageSvc[Group Stage Prediction Service]
         LeaderboardSvc[Leaderboard Service]
+        NotificationSvc[Notification Service]
         CacheSvc[Cache Service]
     end
 
@@ -33,6 +34,8 @@ graph TB
         FixtureSync[Fixture Sync Job<br/>Every 6 hours]
         MatchUpdate[Match Update Job<br/>Every 5 minutes]
         ScoringJob[Scoring Job<br/>Every 10 minutes]
+        PreMatchNotif[Pre-Match Notification Job<br/>Every 15 minutes]
+        PostMatchNotif[Post-Match Notification Job<br/>Every 15 minutes]
     end
 
     Bot --> Handlers
@@ -42,6 +45,9 @@ graph TB
     Handlers --> TournamentSvc
     Handlers --> GroupStageSvc
     Handlers --> LeaderboardSvc
+
+    NotificationSvc --> Bot
+    NotificationSvc --> Repos
 
     MatchSvc --> Repos
     BetSvc --> Repos
@@ -59,6 +65,8 @@ graph TB
     FixtureSync --> MatchSvc
     MatchUpdate --> MatchSvc
     ScoringJob --> ScoringSvc
+    PreMatchNotif --> NotificationSvc
+    PostMatchNotif --> NotificationSvc
 ```
 
 ## Key Components
@@ -76,6 +84,7 @@ Business logic for:
 - User management
 - Tournament and group stage predictions
 - Leaderboard generation
+- Smart notifications (pre-match reminders and post-match results)
 - API response caching
 
 ### Data Layer
@@ -95,6 +104,8 @@ Business logic for:
 | Fixture Sync | Every 6 hours | Syncs matches and groups from football-data.org |
 | Match Updates | Every 5 minutes | Updates live match scores and statuses |
 | Scoring | Every 10 minutes | Calculates points for finished matches |
+| Pre-Match Notifications | Every 15 minutes | Sends reminders to users who haven't bet on matches starting in 1 hour |
+| Post-Match Notifications | Every 15 minutes | Notifies users of their earned points after matches finish |
 
 ## Data Flow
 

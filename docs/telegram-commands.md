@@ -53,10 +53,14 @@ Available to users listed in `ADMIN_TELEGRAM_IDS` environment variable:
 | `/admin_fetch_new_fixtures` | Fetch and sync new fixtures from API (expensive API operation) |
 | `/admin_refresh_matches_statuses` | Update live match statuses and scores (expensive API operation) |
 | `/admin_calculate_user_points` | Calculate and update user points for finished matches |
+| `/admin_send_pre_match_notifications` | Manually trigger pre-match notifications (users without bets for matches starting in 1-2 hours) |
+| `/admin_send_post_match_notifications` | Manually trigger post-match notifications (notify users of points earned for recently finished matches) |
 
 ### Admin Button Actions
 - 🤖 Fetch New Fixtures
 - 🤖 Refresh Match Statuses
 - 🤖 Calculate User Points
+- 🤖 Send Pre-Match Notifications
+- 🤖 Send Post-Match Notifications
 
 **Note**: Admin commands can trigger expensive API operations. Only add trusted users to the admin list.

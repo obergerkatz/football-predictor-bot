@@ -82,6 +82,16 @@ Group stage qualifier predictions.
 - `created_at`: Creation timestamp
 - `updated_at`: Last update timestamp
 
+### notifications
+Notification tracking to prevent duplicate messages.
+
+- `id`: Primary key
+- `user_id`: Foreign key to users
+- `match_id`: Foreign key to matches (nullable)
+- `notification_type`: Type of notification (pre_match_no_bet/post_match_points)
+- `message`: Full notification message text
+- `sent_at`: Timestamp when notification was sent
+
 ## Views
 
 ### leaderboard_view
@@ -114,6 +124,10 @@ Performance indexes for common queries:
 - `bets.user_id`
 - `bets.match_id`
 - `scores.bet_id` (unique)
+- `notifications.user_id`
+- `notifications.match_id`
+- `notifications.notification_type`
+- `notifications(user_id, match_id, notification_type)` (composite index for duplicate detection)
 
 ## Key Features
 
@@ -122,6 +136,7 @@ Performance indexes for common queries:
 - **JSONB flexibility**: Group stage predictions stored as JSON for flexible group structures (supports any number of groups).
 - **Optimized queries**: Leaderboard view pre-aggregates all statistics for fast queries.
 - **Referential integrity**: Foreign key constraints ensure data consistency.
+- **Notification tracking**: Prevents duplicate notifications by tracking sent messages per user/match/type combination.
 
 ## Migration Files
 
@@ -131,5 +146,8 @@ Schema changes are managed through SQL migration files in `src/db/migrations/`:
 2. `002_tournament_predictions.sql` - Tournament predictions table
 3. `007_create_group_stage_predictions.sql` - Group stage predictions table
 4. `008_expand_group_stage_to_12_groups.sql` - Support for 12 groups
+5. `009_add_league_code.sql` - Add league code field
+6. `010_add_league_to_predictions.sql` - Add league foreign keys to predictions
+7. `011_create_notifications.sql` - Notifications tracking table
 
 Migrations are run automatically on application startup.

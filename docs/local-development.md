@@ -88,17 +88,17 @@ DB_USER=postgres
 DB_PASSWORD=postgres
 
 # Application
-NODE_ENV=development
 LOG_LEVEL=info
 
 # Background Jobs (optional, defaults shown)
 FETCH_NEW_FIXTURES_CRON=0 */6 * * *
 REFRESH_MATCHES_STATUSES_CRON=*/5 * * * *
 CALCULATE_USER_POINTS_CRON=*/10 * * * *
+PRE_MATCH_NOTIFICATION_CRON=*/15 * * * *
+POST_MATCH_NOTIFICATION_CRON=*/15 * * * *
 
-# Competition
+# Competition (comma-separated codes)
 DEFAULT_LEAGUE_IDS=WC
-DEFAULT_SEASON=2022
 
 # Admin (comma-separated Telegram user IDs)
 ADMIN_TELEGRAM_IDS=

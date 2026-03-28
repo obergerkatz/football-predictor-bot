@@ -29,6 +29,9 @@ async function bootstrap() {
     logger.info('Launching Telegram bot...');
     await telegramBot.launch();
 
+    // Set bot instance for scheduler (needed for notifications)
+    jobScheduler.setBot(telegramBot.getBot());
+
     // Start job scheduler (which will handle periodic updates)
     logger.info('Starting job scheduler...');
     jobScheduler.start();

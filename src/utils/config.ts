@@ -18,17 +18,17 @@ interface Config {
     password: string;
   };
   app: {
-    nodeEnv: string;
     logLevel: string;
   };
   jobs: {
     fetchNewFixturesCron: string;
     refreshMatchesStatusesCron: string;
     calculateUserPointsCron: string;
+    preMatchNotificationCron: string;
+    postMatchNotificationCron: string;
   };
   leagues: {
     defaultLeagueIds: string[];
-    defaultSeason: number;
   };
   admin: {
     telegramIds: string[];
@@ -81,17 +81,17 @@ export const config: Config = {
     password: getEnv('DB_PASSWORD'),
   },
   app: {
-    nodeEnv: getEnv('NODE_ENV', 'development'),
     logLevel: getEnv('LOG_LEVEL', 'info'),
   },
   jobs: {
     fetchNewFixturesCron: getEnv('FETCH_NEW_FIXTURES_CRON', '0 */6 * * *'),
     refreshMatchesStatusesCron: getEnv('REFRESH_MATCHES_STATUSES_CRON', '*/5 * * * *'),
     calculateUserPointsCron: getEnv('CALCULATE_USER_POINTS_CRON', '*/10 * * * *'),
+    preMatchNotificationCron: getEnv('PRE_MATCH_NOTIFICATION_CRON', '*/15 * * * *'),
+    postMatchNotificationCron: getEnv('POST_MATCH_NOTIFICATION_CRON', '*/15 * * * *'),
   },
   leagues: {
     defaultLeagueIds: getEnvArray('DEFAULT_LEAGUE_IDS', ['PL', 'PD', 'CL']),
-    defaultSeason: getEnvNumber('DEFAULT_SEASON', new Date().getFullYear()),
   },
   admin: {
     telegramIds: getEnvArray('ADMIN_TELEGRAM_IDS', []),

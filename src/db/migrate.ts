@@ -23,6 +23,7 @@ async function runMigrations() {
       '008_expand_group_stage_to_12_groups.sql',
       '009_add_league_code.sql',
       '010_add_league_to_predictions.sql',
+      '011_create_notifications.sql',
     ];
 
     for (const migrationFile of migrations) {

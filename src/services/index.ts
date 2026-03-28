@@ -6,3 +6,4 @@ export * from './scoring.service';
 export * from './leaderboard.service';
 export * from './tournament-prediction.service';
 export * from './group-stage-prediction.service';
+export * from './notification.service';

@@ -17,6 +17,10 @@ export function createMainMenuKeyboard(isAdmin: boolean = false): {
   if (isAdmin) {
     keyboard.push([{ text: '🤖 Fetch New Fixtures' }, { text: '🤖 Refresh Match Statuses' }]);
     keyboard.push([{ text: '🤖 Calculate User Points' }]);
+    keyboard.push([
+      { text: '🤖 Send Pre-Match Notifications' },
+      { text: '🤖 Send Post-Match Notifications' },
+    ]);
   }
 
   return {

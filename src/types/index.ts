@@ -145,6 +145,20 @@ export interface GroupStagePrediction {
   updated_at: Date;
 }
 
+export enum NotificationType {
+  PRE_MATCH_NO_BET = 'pre_match_no_bet',
+  POST_MATCH_POINTS = 'post_match_points',
+}
+
+export interface Notification {
+  id: number;
+  user_id: number;
+  match_id: number | null;
+  notification_type: NotificationType;
+  message: string;
+  sent_at: Date;
+}
+
 // API-Football Response Types
 
 export interface APIFootballFixture {
