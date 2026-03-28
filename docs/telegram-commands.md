@@ -57,7 +57,7 @@ Available to users listed in `ADMIN_TELEGRAM_IDS` environment variable:
 | `/admin_send_post_match_notifications` | Manually trigger post-match notifications (notify users of points earned for recently finished matches) |
 
 ### Admin Button Actions
-- 🤖 Fetch New Fixtures
+- 🤖 Fetch New Matches
 - 🤖 Refresh Match Statuses
 - 🤖 Calculate User Points
 - 🤖 Send Pre-Match Notifications

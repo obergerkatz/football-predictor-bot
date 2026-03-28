@@ -23,14 +23,14 @@ export class JobScheduler {
     }
     logger.info('Starting job scheduler');
 
-    // Fetch new fixtures job (default: every 6 hours)
-    const fetchNewFixturesCron = cron.schedule(
-      config.jobs.fetchNewFixturesCron,
+    // Fetch new matches job (default: every 6 hours)
+    const fetchNewMatchesCron = cron.schedule(
+      config.jobs.fetchNewMatchesCron,
       async () => {
         try {
           await fixtureSyncJob.run();
         } catch (error) {
-          logger.error('Fetch new fixtures job error', { error });
+          logger.error('Fetch new matches job error', { error });
         }
       },
       { scheduled: false }
@@ -94,7 +94,7 @@ export class JobScheduler {
     );
 
     this.jobs = [
-      fetchNewFixturesCron,
+      fetchNewMatchesCron,
       refreshMatchesStatusesCron,
       calculateUserPointsCron,
       preMatchNotificationCron,
@@ -105,7 +105,7 @@ export class JobScheduler {
     this.jobs.forEach((job) => job.start());
 
     logger.info('Job scheduler started', {
-      fetchNewFixturesCron: config.jobs.fetchNewFixturesCron,
+      fetchNewMatchesCron: config.jobs.fetchNewMatchesCron,
       refreshMatchesStatusesCron: config.jobs.refreshMatchesStatusesCron,
       calculateUserPointsCron: config.jobs.calculateUserPointsCron,
       preMatchNotificationCron: config.jobs.preMatchNotificationCron,

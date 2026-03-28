@@ -13,7 +13,7 @@ function isAdmin(telegramId: string): boolean {
   return config.admin.telegramIds.includes(telegramId);
 }
 
-export async function handleAdminFetchNewFixtures(ctx: Context): Promise<void> {
+export async function handleAdminFetchNewMatches(ctx: Context): Promise<void> {
   try {
     if (!ctx.from) return;
 
@@ -24,16 +24,16 @@ export async function handleAdminFetchNewFixtures(ctx: Context): Promise<void> {
       return;
     }
 
-    await ctx.reply('🔄 Fetching new fixtures from API...');
+    await ctx.reply('🔄 Fetching new matches from API...');
 
     await fixtureSyncJob.run();
 
-    await ctx.reply('✅ New fixtures fetched and synced successfully!');
+    await ctx.reply('✅ New matches fetched and synced successfully!');
 
-    logger.info('Admin triggered fetch new fixtures', { telegramId });
+    logger.info('Admin triggered fetch new matches', { telegramId });
   } catch (error) {
-    logger.error('Error in admin fetch new fixtures', { error });
-    await ctx.reply('❌ Fetch new fixtures failed. Check logs for details.');
+    logger.error('Error in admin fetch new matches', { error });
+    await ctx.reply('❌ Fetch new matches failed. Check logs for details.');
   }
 }
 
