@@ -30,9 +30,6 @@ export async function handleMe(ctx: Context): Promise<void> {
       return;
     }
 
-    const avgPoints =
-      stats.scored_bets > 0 ? (stats.total_points / stats.scored_bets).toFixed(1) : '0.0';
-
     // Build message with beautiful formatting
     let message = `👤 YOUR PROFILE\n`;
     message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
@@ -45,7 +42,6 @@ export async function handleMe(ctx: Context): Promise<void> {
     message += `📊 OVERALL PERFORMANCE\n`;
     message += `━━━━━━━━━━━━━━━━━━━━\n`;
     message += `🎯 Total Points: ${stats.total_points}\n`;
-    message += `📈 Average: ${avgPoints} pts/bet\n`;
     message += `📋 Total Bets: ${stats.total_bets}\n`;
     message += `   ✅ Finished: ${stats.scored_bets}\n`;
     message += `   ⏳ Upcoming: ${stats.pending_bets}\n\n`;

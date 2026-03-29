@@ -27,14 +27,12 @@ export async function handleLeaderboard(ctx: Context): Promise<void> {
       const medal =
         entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : '  ';
       const name = entry.username ? `@${entry.username}` : entry.first_name;
-      const avgPoints =
-        entry.total_bets > 0 ? (entry.total_points / entry.total_bets).toFixed(1) : '0.0';
 
       // Player name and rank
       message += `${medal} #${entry.rank} ${name}\n`;
 
       // Main stats
-      message += `   📊 ${entry.total_points} pts • ${entry.total_bets} bets • ${avgPoints} avg\n`;
+      message += `   📊 ${entry.total_points} pts • ${entry.total_bets} bets\n`;
 
       // Point breakdown in compact format
       message += `   🎯 6:${entry.exact_scores} | 4:${entry.goal_diffs} | 3:${entry.three_pt_scores} | 1:${entry.one_pt_scores} | 0:${entry.zero_scores}`;
