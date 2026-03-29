@@ -1,6 +1,7 @@
 import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';
 import { config } from '../utils/config';
 import { logger } from '../utils/logger';
+import { DB_TIMEOUT } from '../constants';
 
 class Database {
   private pool: Pool;
@@ -13,8 +14,8 @@ class Database {
       user: config.database.user,
       password: config.database.password,
       max: 20,
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 2000,
+      idleTimeoutMillis: DB_TIMEOUT.IDLE,
+      connectionTimeoutMillis: DB_TIMEOUT.CONNECTION,
     });
 
     this.pool.on('error', (err) => {

@@ -7,6 +7,7 @@ import {
   createExistingTournamentPredictionKeyboard,
 } from '../keyboards';
 import { formatTeamWithFlag } from '../../utils/flags';
+import { SESSION_TIMEOUT, ERROR_MESSAGES } from '../../constants';
 
 // Session store for tournament prediction flow
 interface TournamentPredictionSession {
@@ -20,13 +21,13 @@ interface TournamentPredictionSession {
 }
 
 const tpSessions = new Map<number, TournamentPredictionSession>();
-const SESSION_TIMEOUT = 10 * 60 * 1000; // 10 minutes
+const TP_SESSION_TIMEOUT = SESSION_TIMEOUT.TOURNAMENT_PREDICTION;
 
 function getTpSession(userId: number): TournamentPredictionSession | null {
   const session = tpSessions.get(userId);
   if (!session) return null;
 
-  if (Date.now() - session.timestamp > SESSION_TIMEOUT) {
+  if (Date.now() - session.timestamp > TP_SESSION_TIMEOUT) {
     tpSessions.delete(userId);
     return null;
   }
@@ -46,7 +47,7 @@ export async function handleTournamentPrediction(ctx: Context): Promise<void> {
     const user = await userService.getUserByTelegramId(telegramId);
 
     if (!user) {
-      await ctx.reply(`❌ User Not Found\n\n` + `Please tap the /start button to register first.`);
+      await ctx.reply(ERROR_MESSAGES.USER_NOT_FOUND);
       return;
     }
 

@@ -2,6 +2,7 @@ import { Context } from 'telegraf';
 import { matchService } from '../../services';
 import { createMatchListKeyboard } from '../keyboards';
 import { logger } from '../../utils/logger';
+import { ERROR_MESSAGES } from '../../constants';
 
 export async function handleMatches(ctx: Context): Promise<void> {
   try {
@@ -39,7 +40,7 @@ export async function handleMatches(ctx: Context): Promise<void> {
   } catch (error) {
     logger.error('Error handling /matches', { error });
     await ctx.reply(
-      `❌ Oops! Something went wrong.\n\n` +
+      ERROR_MESSAGES.GENERIC_ERROR +
         `We couldn't load the matches right now.\n` +
         `Please try tapping the 📅 Upcoming Matches button again.`
     );

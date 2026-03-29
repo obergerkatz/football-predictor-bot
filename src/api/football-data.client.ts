@@ -3,6 +3,7 @@ import { config } from '../utils/config';
 import { logger } from '../utils/logger';
 import { MatchStatus } from '../types';
 import { cacheService } from '../services/cache.service';
+import { API_TIMEOUT } from '../constants';
 
 const CACHE_TTL = {
   MATCHES: 60 * 60, // 1 hour
@@ -100,7 +101,7 @@ export class FootballDataClient {
       headers: {
         'X-Auth-Token': config.apiFootball.apiKey,
       },
-      timeout: 10000,
+      timeout: API_TIMEOUT,
     });
 
     // Request interceptor for rate limiting

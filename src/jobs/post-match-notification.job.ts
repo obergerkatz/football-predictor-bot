@@ -3,6 +3,7 @@ import { db } from '../db/database';
 import { NotificationService } from '../services/notification.service';
 import { User } from '../types';
 import { logger } from '../utils/logger';
+import { NOTIFICATION_WINDOW } from '../constants';
 
 export class PostMatchNotificationJob {
   constructor(private notificationService: NotificationService) {}
@@ -12,7 +13,7 @@ export class PostMatchNotificationJob {
       logger.info('Starting post-match notification job');
 
       // Find recently finished matches (last 2 hours)
-      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+      const twoHoursAgo = new Date(Date.now() - NOTIFICATION_WINDOW.POST_MATCH);
       const finishedMatches = await matchRepository.findRecentFinished(50);
 
       // Filter to only matches finished in the last 2 hours

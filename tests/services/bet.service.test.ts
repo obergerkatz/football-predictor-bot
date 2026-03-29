@@ -2,6 +2,7 @@ import { BetService } from '../../src/services/bet.service';
 import { betRepository } from '../../src/db/repositories';
 import { matchService } from '../../src/services/match.service';
 import { MatchStatus } from '../../src/types';
+import { SCORING_POINTS } from '../../src/constants';
 
 // Mock the repositories and services
 jest.mock('../../src/db/repositories', () => ({
@@ -157,7 +158,7 @@ describe('BetService', () => {
   describe('getBetScore', () => {
     it('should return score for scored bet', async () => {
       const betId = 1;
-      const mockScore = { points_awarded: 6 };
+      const mockScore = { points_awarded: SCORING_POINTS.EXACT_MATCH };
 
       (betRepository.getBetScore as jest.Mock).mockResolvedValue(mockScore);
 

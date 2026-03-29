@@ -6,6 +6,7 @@ import {
 } from '../../services';
 import { logger } from '../../utils/logger';
 import { formatTeamWithFlag } from '../../utils/flags';
+import { ERROR_MESSAGES } from '../../constants';
 
 export async function handleMe(ctx: Context): Promise<void> {
   try {
@@ -15,7 +16,7 @@ export async function handleMe(ctx: Context): Promise<void> {
     const user = await userService.getUserByTelegramId(telegramId);
 
     if (!user) {
-      await ctx.reply(`❌ User Not Found\n\n` + `Please tap the /start button to register first.`);
+      await ctx.reply(ERROR_MESSAGES.USER_NOT_FOUND);
       return;
     }
 
@@ -23,7 +24,7 @@ export async function handleMe(ctx: Context): Promise<void> {
 
     if (!stats) {
       await ctx.reply(
-        `❌ Oops! Something went wrong.\n\n` +
+        ERROR_MESSAGES.GENERIC_ERROR +
           `We couldn't load your stats right now.\n` +
           `Please try tapping the 📊 My Stats button again.`
       );

@@ -4,6 +4,8 @@ import { logger } from '../../utils/logger';
 import { MatchStatus } from '../../types';
 import { formatTeamWithFlag } from '../../utils/flags';
 import { InlineKeyboardMarkup } from 'telegraf/types';
+import { ERROR_MESSAGES, MATCH_STATUS_DISPLAY } from '../../constants';
+import { formatTime24Hour } from '../../utils/date.utils';
 
 export async function handleTodayMatches(ctx: Context): Promise<void> {
   try {
@@ -13,7 +15,7 @@ export async function handleTodayMatches(ctx: Context): Promise<void> {
     const user = await userService.getUserByTelegramId(telegramId);
 
     if (!user) {
-      await ctx.reply(`❌ User Not Found\n\n` + `Please tap the /start button to register first.`);
+      await ctx.reply(ERROR_MESSAGES.USER_NOT_FOUND);
       return;
     }
 
@@ -37,19 +39,14 @@ export async function handleTodayMatches(ctx: Context): Promise<void> {
     const bettableMatches = [];
 
     for (const match of matches) {
-      const matchTime = new Date(match.match_date).toLocaleString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-        timeZone: 'Asia/Jerusalem',
-      });
+      const matchTime = formatTime24Hour(new Date(match.match_date));
 
       // Status emoji
       let statusEmoji = '';
       let statusText = '';
       if (match.status === MatchStatus.LIVE) {
         statusEmoji = '🔴';
-        statusText = 'LIVE';
+        statusText = MATCH_STATUS_DISPLAY.LIVE;
       } else if (match.status === MatchStatus.FINISHED) {
         statusEmoji = '✅';
         statusText = 'FT';
@@ -130,7 +127,7 @@ export async function handleTodayMatches(ctx: Context): Promise<void> {
   } catch (error) {
     logger.error('Error handling today matches', { error });
     await ctx.reply(
-      `❌ Oops! Something went wrong.\n\n` +
+      ERROR_MESSAGES.GENERIC_ERROR +
         `We couldn't load today's matches.\n` +
         `Please try tapping the 🗓️ Today Matches button again.`
     );

@@ -1,5 +1,6 @@
 import { db } from '../database';
 import { Bet, BetWithMatch, MatchStatus, ScoreType } from '../../types';
+import { DB_FIELDS } from '../../constants';
 
 interface BetWithMatchRow extends Bet {
   // Match fields
@@ -23,24 +24,25 @@ interface BetWithMatchRow extends Bet {
 
 export class BetRepository {
   async findByUserAndMatch(userId: number, matchId: number): Promise<Bet | null> {
-    const result = await db.query<Bet>('SELECT * FROM bets WHERE user_id = $1 AND match_id = $2', [
-      userId,
-      matchId,
-    ]);
+    const result = await db.query<Bet>(
+      `SELECT * FROM bets WHERE ${DB_FIELDS.USER_ID} = $1 AND ${DB_FIELDS.MATCH_ID} = $2`,
+      [userId, matchId]
+    );
     return result.rows[0] || null;
   }
 
   async findByUserAndMatchWithScore(userId: number, matchId: number): Promise<BetWithMatch | null> {
     const result = await db.query<BetWithMatchRow>(
       `SELECT b.*,
-              m.id as match_id, m.api_fixture_id, m.league_id, m.home_team, m.away_team,
-              m.match_date, m.status as match_status, m.home_score, m.away_score,
+              m.${DB_FIELDS.API_FIXTURE_ID}, m.${DB_FIELDS.LEAGUE_ID}, m.home_team, m.away_team,
+              m.match_date, m.status as match_status,
+              m.${DB_FIELDS.HOME_SCORE}, m.${DB_FIELDS.AWAY_SCORE},
               m.home_score_ft, m.away_score_ft, m.updated_at as match_updated_at,
               s.id as score_id, s.points_awarded, s.score_type, s.calculated_at
        FROM bets b
-       JOIN matches m ON b.match_id = m.id
+       JOIN matches m ON b.${DB_FIELDS.MATCH_ID} = m.id
        LEFT JOIN scores s ON b.id = s.bet_id
-       WHERE b.user_id = $1 AND b.match_id = $2`,
+       WHERE b.${DB_FIELDS.USER_ID} = $1 AND b.${DB_FIELDS.MATCH_ID} = $2`,
       [userId, matchId]
     );
 
@@ -54,14 +56,15 @@ export class BetRepository {
   async findByUser(userId: number): Promise<BetWithMatch[]> {
     const result = await db.query<BetWithMatchRow>(
       `SELECT b.*,
-              m.id as match_id, m.api_fixture_id, m.league_id, m.home_team, m.away_team,
-              m.match_date, m.status as match_status, m.home_score, m.away_score,
+              m.${DB_FIELDS.API_FIXTURE_ID}, m.${DB_FIELDS.LEAGUE_ID}, m.home_team, m.away_team,
+              m.match_date, m.status as match_status,
+              m.${DB_FIELDS.HOME_SCORE}, m.${DB_FIELDS.AWAY_SCORE},
               m.home_score_ft, m.away_score_ft, m.updated_at as match_updated_at,
               s.id as score_id, s.points_awarded, s.score_type, s.calculated_at
        FROM bets b
-       JOIN matches m ON b.match_id = m.id
+       JOIN matches m ON b.${DB_FIELDS.MATCH_ID} = m.id
        LEFT JOIN scores s ON b.id = s.bet_id
-       WHERE b.user_id = $1
+       WHERE b.${DB_FIELDS.USER_ID} = $1
        ORDER BY m.match_date DESC`,
       [userId]
     );
@@ -70,7 +73,9 @@ export class BetRepository {
   }
 
   async findByMatch(matchId: number): Promise<Bet[]> {
-    const result = await db.query<Bet>('SELECT * FROM bets WHERE match_id = $1', [matchId]);
+    const result = await db.query<Bet>(`SELECT * FROM bets WHERE ${DB_FIELDS.MATCH_ID} = $1`, [
+      matchId,
+    ]);
     return result.rows;
   }
 
@@ -81,7 +86,7 @@ export class BetRepository {
     predictedAwayScore: number
   ): Promise<Bet> {
     const result = await db.query<Bet>(
-      `INSERT INTO bets (user_id, match_id, predicted_home_score, predicted_away_score)
+      `INSERT INTO bets (${DB_FIELDS.USER_ID}, ${DB_FIELDS.MATCH_ID}, ${DB_FIELDS.PREDICTED_HOME_SCORE}, ${DB_FIELDS.PREDICTED_AWAY_SCORE})
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
       [userId, matchId, predictedHomeScore, predictedAwayScore]
@@ -93,7 +98,7 @@ export class BetRepository {
     const result = await db.query<Bet>(
       `SELECT b.* FROM bets b
        LEFT JOIN scores s ON b.id = s.bet_id
-       WHERE b.match_id = $1 AND s.id IS NULL`,
+       WHERE b.${DB_FIELDS.MATCH_ID} = $1 AND s.id IS NULL`,
       [matchId]
     );
     return result.rows;
@@ -106,7 +111,7 @@ export class BetRepository {
   ): Promise<Bet> {
     const result = await db.query<Bet>(
       `UPDATE bets
-       SET predicted_home_score = $2, predicted_away_score = $3
+       SET ${DB_FIELDS.PREDICTED_HOME_SCORE} = $2, ${DB_FIELDS.PREDICTED_AWAY_SCORE} = $3
        WHERE id = $1
        RETURNING *`,
       [betId, predictedHomeScore, predictedAwayScore]

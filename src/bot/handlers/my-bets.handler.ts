@@ -8,6 +8,8 @@ import {
 import { logger } from '../../utils/logger';
 import { MatchStatus } from '../../types';
 import { formatTeamWithFlag } from '../../utils/flags';
+import { ERROR_MESSAGES } from '../../constants';
+import { formatDateTimeShort, formatDateWithYear } from '../../utils/date.utils';
 
 export async function handleMyBets(ctx: Context): Promise<void> {
   try {
@@ -17,7 +19,7 @@ export async function handleMyBets(ctx: Context): Promise<void> {
     const user = await userService.getUserByTelegramId(telegramId);
 
     if (!user) {
-      await ctx.reply(`❌ User Not Found\n\n` + `Please tap the /start button to register first.`);
+      await ctx.reply(ERROR_MESSAGES.USER_NOT_FOUND);
       return;
     }
 
@@ -144,13 +146,7 @@ export async function handleMyBets(ctx: Context): Promise<void> {
     if (pendingBets.length > 0) {
       message += `⏳ UPCOMING (${pendingBets.length})\n\n`;
       for (const bet of pendingBets) {
-        const matchDate = new Date(bet.match.match_date).toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'Asia/Jerusalem',
-        });
+        const matchDate = formatDateTimeShort(new Date(bet.match.match_date));
         message += `⚽ ${formatTeamWithFlag(bet.match.home_team)} vs ${formatTeamWithFlag(bet.match.away_team)}\n`;
         message += `   🎯 Your bet: ${bet.predicted_home_score}-${bet.predicted_away_score}\n`;
         message += `   📅 ${matchDate}\n\n`;
@@ -173,12 +169,7 @@ export async function handleMyBets(ctx: Context): Promise<void> {
     if (completedBets.length > 0) {
       message += `✅ FINISHED (${completedBets.length})\n\n`;
       for (const bet of completedBets) {
-        const matchDate = new Date(bet.match.match_date).toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-          timeZone: 'Asia/Jerusalem',
-        });
+        const matchDate = formatDateWithYear(new Date(bet.match.match_date));
         message += `⚽ ${formatTeamWithFlag(bet.match.home_team)} vs ${formatTeamWithFlag(bet.match.away_team)}\n`;
         message += `   📊 Result: ${bet.match.home_score}-${bet.match.away_score}\n`;
         message += `   🎯 Your bet: ${bet.predicted_home_score}-${bet.predicted_away_score}\n`;

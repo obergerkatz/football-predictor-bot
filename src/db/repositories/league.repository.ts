@@ -1,6 +1,7 @@
 import { db } from '../database';
 import { League } from '../../types';
 import { config } from '../../utils/config';
+import { DB_FIELDS } from '../../constants';
 
 export class LeagueRepository {
   async upsert(
@@ -12,9 +13,9 @@ export class LeagueRepository {
     logoUrl?: string
   ): Promise<League> {
     const result = await db.query<League>(
-      `INSERT INTO leagues (api_league_id, name, country, season, code, logo_url)
+      `INSERT INTO leagues (${DB_FIELDS.API_LEAGUE_ID}, name, country, season, code, logo_url)
        VALUES ($1, $2, $3, $4, $5, $6)
-       ON CONFLICT (api_league_id, season) DO UPDATE
+       ON CONFLICT (${DB_FIELDS.API_LEAGUE_ID}, season) DO UPDATE
        SET name = EXCLUDED.name,
            country = EXCLUDED.country,
            code = EXCLUDED.code,

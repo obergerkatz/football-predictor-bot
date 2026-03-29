@@ -1,6 +1,8 @@
 import { InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup } from 'telegraf/types';
 import { MatchWithLeague } from '../types';
 import { formatTeamWithFlag } from '../utils/flags';
+import { formatDateTimeShort, formatDateOnly } from '../utils/date.utils';
+import { buildCallbackData } from '../constants';
 
 export function createMainMenuKeyboard(isAdmin: boolean = false): {
   reply_markup: ReplyKeyboardMarkup;
@@ -34,18 +36,12 @@ export function createMainMenuKeyboard(isAdmin: boolean = false): {
 
 export function createMatchListKeyboard(matches: MatchWithLeague[]): InlineKeyboardMarkup {
   const buttons: InlineKeyboardButton[][] = matches.map((match) => {
-    const dateStr = new Date(match.match_date).toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'Asia/Jerusalem',
-    });
+    const dateStr = formatDateTimeShort(new Date(match.match_date));
 
     return [
       {
         text: `${formatTeamWithFlag(match.home_team)} vs ${formatTeamWithFlag(match.away_team)} - ${dateStr}`,
-        callback_data: `bet_${match.id}`,
+        callback_data: buildCallbackData.bet(match.id),
       },
     ];
   });
@@ -55,11 +51,7 @@ export function createMatchListKeyboard(matches: MatchWithLeague[]): InlineKeybo
 
 export function createCompletedMatchListKeyboard(matches: MatchWithLeague[]): InlineKeyboardMarkup {
   const buttons: InlineKeyboardButton[][] = matches.map((match) => {
-    const dateStr = new Date(match.match_date).toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      timeZone: 'Asia/Jerusalem',
-    });
+    const dateStr = formatDateOnly(new Date(match.match_date));
 
     const scoreText =
       match.home_score !== null && match.away_score !== null
@@ -69,7 +61,7 @@ export function createCompletedMatchListKeyboard(matches: MatchWithLeague[]): In
     return [
       {
         text: `${formatTeamWithFlag(match.home_team)} vs ${formatTeamWithFlag(match.away_team)} (${scoreText}) - ${dateStr}`,
-        callback_data: `result_${match.id}`,
+        callback_data: buildCallbackData.result(match.id),
       },
     ];
   });
@@ -90,12 +82,15 @@ export function createTeamSelectionKeyboard(
     const row: InlineKeyboardButton[] = [];
     row.push({
       text: formatTeamWithFlag(availableTeams[i]),
-      callback_data: `tp_select_${position}_${availableTeams[i]}`,
+      callback_data: buildCallbackData.tournamentPredictionSelect(position, availableTeams[i]),
     });
     if (i + 1 < availableTeams.length) {
       row.push({
         text: formatTeamWithFlag(availableTeams[i + 1]),
-        callback_data: `tp_select_${position}_${availableTeams[i + 1]}`,
+        callback_data: buildCallbackData.tournamentPredictionSelect(
+          position,
+          availableTeams[i + 1]
+        ),
       });
     }
     buttons.push(row);
@@ -118,7 +113,9 @@ export function createTournamentPredictionConfirmKeyboard(
       [
         {
           text: '✅ Confirm Prediction',
-          callback_data: `tp_confirm_${first}_${second}_${third}_${fourth}`,
+          callback_data: buildCallbackData.tournamentPredictionConfirm(
+            `${first}_${second}_${third}_${fourth}`
+          ),
         },
       ],
       [{ text: '🔄 Start Over', callback_data: 'tp_start' }],
@@ -165,7 +162,7 @@ export function createScoreSelectionKeyboard(
   for (let i = 0; i < scores.length; i += 3) {
     const row: InlineKeyboardButton[] = scores.slice(i, i + 3).map((score) => ({
       text: score.toString(),
-      callback_data: `bet_score_${matchId}_${team}_${score}`,
+      callback_data: buildCallbackData.betScore(matchId, team, score),
     }));
     rows.push(row);
   }
@@ -174,7 +171,7 @@ export function createScoreSelectionKeyboard(
   rows.push([{ text: '10+ (Enter custom)', callback_data: `bet_custom_${matchId}_${team}` }]);
 
   // Add cancel button
-  rows.push([{ text: '❌ Cancel', callback_data: 'cancel_bet' }]);
+  rows.push([{ text: '❌ Cancel', callback_data: buildCallbackData.cancelBet() }]);
 
   return { inline_keyboard: rows };
 }
@@ -189,14 +186,14 @@ export function createBetConfirmationKeyboard(
       [
         {
           text: '✅ Confirm Bet',
-          callback_data: `bet_confirm_${matchId}_${homeScore}_${awayScore}`,
+          callback_data: buildCallbackData.betConfirm(matchId, homeScore, awayScore),
         },
       ],
       [
         { text: '🔄 Change Home Score', callback_data: `bet_change_home_${matchId}_${awayScore}` },
         { text: '🔄 Change Away Score', callback_data: `bet_change_away_${matchId}_${homeScore}` },
       ],
-      [{ text: '❌ Cancel', callback_data: 'cancel_bet' }],
+      [{ text: '❌ Cancel', callback_data: buildCallbackData.cancelBet() }],
     ],
   };
 }
@@ -205,7 +202,7 @@ export function createExistingBetKeyboard(matchId: number): InlineKeyboardMarkup
   return {
     inline_keyboard: [
       [{ text: '✏️ Modify Bet', callback_data: `bet_modify_${matchId}` }],
-      [{ text: '❌ Cancel', callback_data: 'cancel_bet' }],
+      [{ text: '❌ Cancel', callback_data: buildCallbackData.cancelBet() }],
     ],
   };
 }
@@ -224,7 +221,7 @@ export function createGroupSelectionKeyboard(
       const isCompleted = completedGroups.includes(group);
       row.push({
         text: isCompleted ? `✅ ${group}` : group,
-        callback_data: `gsp_group_${group}`,
+        callback_data: buildCallbackData.groupStagePredictionGroup(group),
       });
     }
     buttons.push(row);
@@ -257,12 +254,20 @@ export function createGroupTeamSelectionKeyboard(
     const row: InlineKeyboardButton[] = [];
     row.push({
       text: formatTeamWithFlag(availableTeams[i]),
-      callback_data: `gsp_select_${group}_${position}_${availableTeams[i]}`,
+      callback_data: buildCallbackData.groupStagePredictionSelect(
+        group,
+        position,
+        availableTeams[i]
+      ),
     });
     if (i + 1 < availableTeams.length) {
       row.push({
         text: formatTeamWithFlag(availableTeams[i + 1]),
-        callback_data: `gsp_select_${group}_${position}_${availableTeams[i + 1]}`,
+        callback_data: buildCallbackData.groupStagePredictionSelect(
+          group,
+          position,
+          availableTeams[i + 1]
+        ),
       });
     }
     buttons.push(row);

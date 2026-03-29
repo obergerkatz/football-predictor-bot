@@ -7,6 +7,7 @@ import {
   createExistingGroupPredictionKeyboard,
 } from '../keyboards';
 import { formatTeamWithFlag } from '../../utils/flags';
+import { SESSION_TIMEOUT, ERROR_MESSAGES } from '../../constants';
 
 // Session store for group stage prediction flow
 interface GroupStagePredictionSession {
@@ -17,13 +18,13 @@ interface GroupStagePredictionSession {
 }
 
 const gspSessions = new Map<number, GroupStagePredictionSession>();
-const SESSION_TIMEOUT = 10 * 60 * 1000; // 10 minutes
+const GSP_SESSION_TIMEOUT = SESSION_TIMEOUT.GROUP_STAGE_PREDICTION;
 
 function getGspSession(userId: number): GroupStagePredictionSession | null {
   const session = gspSessions.get(userId);
   if (!session) return null;
 
-  if (Date.now() - session.timestamp > SESSION_TIMEOUT) {
+  if (Date.now() - session.timestamp > GSP_SESSION_TIMEOUT) {
     gspSessions.delete(userId);
     return null;
   }
@@ -61,7 +62,7 @@ export async function handleGroupStagePrediction(ctx: Context): Promise<void> {
     const user = await userService.getUserByTelegramId(telegramId);
 
     if (!user) {
-      await ctx.reply(`❌ User Not Found\n\n` + `Please tap the /start button to register first.`);
+      await ctx.reply(ERROR_MESSAGES.USER_NOT_FOUND);
       return;
     }
 

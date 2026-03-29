@@ -2,6 +2,8 @@ import { Telegraf } from 'telegraf';
 import { notificationRepository } from '../db/repositories';
 import { NotificationType } from '../types';
 import { logger } from '../utils/logger';
+import { TIME_MS } from '../constants';
+import { formatDateTimeFull } from '../utils/date.utils';
 
 export class NotificationService {
   constructor(private bot: Telegraf) {}
@@ -102,7 +104,7 @@ export class NotificationService {
   private formatTimeUntilMatch(matchDate: Date): string {
     const now = new Date();
     const diff = matchDate.getTime() - now.getTime();
-    const minutes = Math.floor(diff / 60000);
+    const minutes = Math.floor(diff / TIME_MS.MINUTE);
     const hours = Math.floor(minutes / 60);
 
     if (hours > 0) {
@@ -113,14 +115,7 @@ export class NotificationService {
   }
 
   private formatMatchDate(date: Date): string {
-    return new Intl.DateTimeFormat('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'Asia/Jerusalem',
-    }).format(date);
+    return formatDateTimeFull(date);
   }
 
   private getPointsEmoji(points: number): string {

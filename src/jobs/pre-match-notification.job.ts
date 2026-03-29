@@ -3,6 +3,7 @@ import { db } from '../db/database';
 import { NotificationService } from '../services/notification.service';
 import { User } from '../types';
 import { logger } from '../utils/logger';
+import { NOTIFICATION_WINDOW } from '../constants';
 
 export class PreMatchNotificationJob {
   constructor(private notificationService: NotificationService) {}
@@ -13,8 +14,8 @@ export class PreMatchNotificationJob {
 
       // Find matches starting in the next 1-2 hours
       const now = new Date();
-      const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
-      const twoHoursFromNow = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+      const oneHourFromNow = new Date(now.getTime() + NOTIFICATION_WINDOW.PRE_MATCH_MIN);
+      const twoHoursFromNow = new Date(now.getTime() + NOTIFICATION_WINDOW.PRE_MATCH_MAX);
 
       // Get upcoming scheduled matches
       const upcomingMatches = await matchRepository.findUpcoming();

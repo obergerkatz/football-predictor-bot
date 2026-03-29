@@ -1,4 +1,5 @@
 import { logger } from '../utils/logger';
+import { CACHE_CLEANUP_INTERVAL } from '../constants';
 
 interface CacheEntry<T> {
   data: T;
@@ -73,10 +74,7 @@ export class CacheService {
 
 export const cacheService = new CacheService();
 
-// Run cleanup every 5 minutes
-setInterval(
-  () => {
-    cacheService.cleanup();
-  },
-  5 * 60 * 1000
-);
+// Run cleanup periodically
+setInterval(() => {
+  cacheService.cleanup();
+}, CACHE_CLEANUP_INTERVAL);

@@ -1,6 +1,7 @@
 import { scoreRepository, betRepository } from '../db/repositories';
 import { ScorePrediction, ScoringResult, ScoreType, Match, Bet } from '../types';
 import { logger } from '../utils/logger';
+import { SCORING_POINTS, SERVICE_ERROR_PREFIX } from '../constants';
 
 export class ScoringService {
   /**
@@ -17,7 +18,7 @@ export class ScoringService {
     // Exact score match
     if (predicted.home === actual.home && predicted.away === actual.away) {
       return {
-        points: 6,
+        points: SCORING_POINTS.EXACT_MATCH,
         type: ScoreType.EXACT,
         details: 'Exact score match',
       };
@@ -29,7 +30,7 @@ export class ScoringService {
 
     if (predictedDiff === actualDiff) {
       return {
-        points: 4,
+        points: SCORING_POINTS.GOAL_DIFFERENCE,
         type: ScoreType.GOAL_DIFF,
         details: 'Correct goal difference',
       };
@@ -53,10 +54,10 @@ export class ScoringService {
     // Check home score
     if (predicted.home === actual.home) {
       if (resultMatch) {
-        points = Math.max(points, 3); // Correct side + correct result
+        points = Math.max(points, SCORING_POINTS.CORRECT_WINNER); // Correct side + correct result
         details.push('home score + correct result');
       } else {
-        points = Math.max(points, 1); // Correct side only
+        points = Math.max(points, SCORING_POINTS.PARTICIPATION); // Correct side only
         details.push('home score only');
       }
     }
@@ -64,10 +65,10 @@ export class ScoringService {
     // Check away score
     if (predicted.away === actual.away) {
       if (resultMatch) {
-        points = Math.max(points, 3); // Correct side + correct result
+        points = Math.max(points, SCORING_POINTS.CORRECT_WINNER); // Correct side + correct result
         details.push('away score + correct result');
       } else {
-        points = Math.max(points, 1); // Correct side only
+        points = Math.max(points, SCORING_POINTS.PARTICIPATION); // Correct side only
         details.push('away score only');
       }
     }
@@ -130,7 +131,11 @@ export class ScoringService {
         type: result.type,
       });
     } catch (error) {
-      logger.error('Failed to score bet', { error, betId: bet.id, matchId: match.id });
+      logger.error(SERVICE_ERROR_PREFIX.FAILED_TO_SCORE_BET, {
+        error,
+        betId: bet.id,
+        matchId: match.id,
+      });
       throw error;
     }
   }
@@ -165,7 +170,7 @@ export class ScoringService {
 
       return unscoredBets.length;
     } catch (error) {
-      logger.error('Failed to score match bets', { error, matchId: match.id });
+      logger.error(SERVICE_ERROR_PREFIX.FAILED_TO_SCORE_MATCH_BETS, { error, matchId: match.id });
       throw error;
     }
   }

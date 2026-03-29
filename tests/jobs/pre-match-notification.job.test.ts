@@ -3,6 +3,7 @@ import { matchRepository, betRepository } from '../../src/db/repositories';
 import { db } from '../../src/db/database';
 import { NotificationService } from '../../src/services/notification.service';
 import { MatchStatus } from '../../src/types';
+import { NOTIFICATION_WINDOW } from '../../src/constants';
 
 // Mock dependencies
 jest.mock('../../src/db/repositories', () => ({
@@ -44,7 +45,12 @@ describe('PreMatchNotificationJob', () => {
   describe('run', () => {
     it('should send notifications to users without bets for matches in window', async () => {
       const now = new Date();
-      const matchInWindow = new Date(now.getTime() + 90 * 60 * 1000); // 1.5 hours from now
+      // Match time = 1.5 hours from now (within 1-2 hour window)
+      const matchInWindow = new Date(
+        now.getTime() +
+          NOTIFICATION_WINDOW.PRE_MATCH_MIN +
+          (NOTIFICATION_WINDOW.PRE_MATCH_MAX - NOTIFICATION_WINDOW.PRE_MATCH_MIN) / 2
+      );
 
       const mockMatch = {
         id: 100,
@@ -81,8 +87,8 @@ describe('PreMatchNotificationJob', () => {
 
     it('should not send notifications for matches outside the 1-2 hour window', async () => {
       const now = new Date();
-      const tooSoon = new Date(now.getTime() + 30 * 60 * 1000); // 30 minutes from now
-      const tooLate = new Date(now.getTime() + 150 * 60 * 1000); // 2.5 hours from now
+      const tooSoon = new Date(now.getTime() + NOTIFICATION_WINDOW.PRE_MATCH_MIN / 2); // Half of min window
+      const tooLate = new Date(now.getTime() + NOTIFICATION_WINDOW.PRE_MATCH_MAX + 30 * 60 * 1000); // 30 min after max window
 
       const mockMatches = [
         {
@@ -111,7 +117,11 @@ describe('PreMatchNotificationJob', () => {
 
     it('should not send notifications to users who already have bets', async () => {
       const now = new Date();
-      const matchInWindow = new Date(now.getTime() + 90 * 60 * 1000);
+      const matchInWindow = new Date(
+        now.getTime() +
+          NOTIFICATION_WINDOW.PRE_MATCH_MIN +
+          (NOTIFICATION_WINDOW.PRE_MATCH_MAX - NOTIFICATION_WINDOW.PRE_MATCH_MIN) / 2
+      );
 
       const mockMatch = {
         id: 100,
@@ -134,8 +144,8 @@ describe('PreMatchNotificationJob', () => {
 
     it('should handle multiple matches and users', async () => {
       const now = new Date();
-      const match1 = new Date(now.getTime() + 70 * 60 * 1000);
-      const match2 = new Date(now.getTime() + 110 * 60 * 1000);
+      const match1 = new Date(now.getTime() + NOTIFICATION_WINDOW.PRE_MATCH_MIN + 10 * 60 * 1000);
+      const match2 = new Date(now.getTime() + NOTIFICATION_WINDOW.PRE_MATCH_MAX - 10 * 60 * 1000);
 
       const mockMatches = [
         {
@@ -171,8 +181,12 @@ describe('PreMatchNotificationJob', () => {
 
     it('should continue processing other matches if one match fails', async () => {
       const now = new Date();
-      const match1 = new Date(now.getTime() + 70 * 60 * 1000);
-      const match2 = new Date(now.getTime() + 90 * 60 * 1000);
+      const match1 = new Date(now.getTime() + NOTIFICATION_WINDOW.PRE_MATCH_MIN + 10 * 60 * 1000);
+      const match2 = new Date(
+        now.getTime() +
+          NOTIFICATION_WINDOW.PRE_MATCH_MIN +
+          (NOTIFICATION_WINDOW.PRE_MATCH_MAX - NOTIFICATION_WINDOW.PRE_MATCH_MIN) / 2
+      );
 
       const mockMatches = [
         {
@@ -210,7 +224,11 @@ describe('PreMatchNotificationJob', () => {
 
     it('should handle empty user list', async () => {
       const now = new Date();
-      const matchInWindow = new Date(now.getTime() + 90 * 60 * 1000);
+      const matchInWindow = new Date(
+        now.getTime() +
+          NOTIFICATION_WINDOW.PRE_MATCH_MIN +
+          (NOTIFICATION_WINDOW.PRE_MATCH_MAX - NOTIFICATION_WINDOW.PRE_MATCH_MIN) / 2
+      );
 
       const mockMatch = {
         id: 100,

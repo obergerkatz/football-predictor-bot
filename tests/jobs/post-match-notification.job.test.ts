@@ -3,6 +3,7 @@ import { matchRepository, betRepository, scoreRepository } from '../../src/db/re
 import { db } from '../../src/db/database';
 import { NotificationService } from '../../src/services/notification.service';
 import { MatchStatus, ScoreType } from '../../src/types';
+import { SCORING_POINTS } from '../../src/constants';
 
 // Mock dependencies
 jest.mock('../../src/db/repositories', () => ({
@@ -69,7 +70,7 @@ describe('PostMatchNotificationJob', () => {
       const mockScore = {
         id: 1,
         bet_id: 1,
-        points_awarded: 6,
+        points_awarded: SCORING_POINTS.EXACT_MATCH,
         score_type: ScoreType.EXACT,
         calculated_at: new Date(),
       };
@@ -176,14 +177,14 @@ describe('PostMatchNotificationJob', () => {
         .mockResolvedValueOnce({
           id: 1,
           bet_id: 1,
-          points_awarded: 6,
+          points_awarded: SCORING_POINTS.EXACT_MATCH,
           score_type: ScoreType.EXACT,
           calculated_at: new Date(),
         })
         .mockResolvedValueOnce({
           id: 2,
           bet_id: 2,
-          points_awarded: 1,
+          points_awarded: SCORING_POINTS.PARTICIPATION,
           score_type: ScoreType.PARTIAL,
           calculated_at: new Date(),
         });
@@ -250,7 +251,7 @@ describe('PostMatchNotificationJob', () => {
       const mockScore = {
         id: 1,
         bet_id: 1,
-        points_awarded: 6,
+        points_awarded: SCORING_POINTS.EXACT_MATCH,
         score_type: ScoreType.EXACT,
         calculated_at: new Date(),
       };
@@ -298,7 +299,7 @@ describe('PostMatchNotificationJob', () => {
       const mockScore = {
         id: 1,
         bet_id: 1,
-        points_awarded: 6,
+        points_awarded: SCORING_POINTS.EXACT_MATCH,
         score_type: ScoreType.EXACT,
         calculated_at: new Date(),
       };

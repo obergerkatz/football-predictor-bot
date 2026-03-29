@@ -7,6 +7,8 @@ import {
   createExistingBetKeyboard,
 } from '../keyboards';
 import { formatTeamWithFlag } from '../../utils/flags';
+import { SESSION_TIMEOUT, CALLBACK_PREFIX } from '../../constants';
+import { formatDateTimeWithWeekday } from '../../utils/date.utils';
 
 // Simple in-memory session store for betting flow
 interface BetSession {
@@ -20,7 +22,7 @@ interface BetSession {
 }
 
 const betSessions = new Map<number, BetSession>();
-const SESSION_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+const BET_SESSION_TIMEOUT = SESSION_TIMEOUT.BET;
 
 function createBetSession(userId: number, matchId: number): void {
   betSessions.set(userId, {
@@ -35,7 +37,7 @@ function getBetSession(userId: number): BetSession | null {
   if (!session) return null;
 
   // Check if session expired
-  if (Date.now() - session.timestamp > SESSION_TIMEOUT) {
+  if (Date.now() - session.timestamp > BET_SESSION_TIMEOUT) {
     betSessions.delete(userId);
     return null;
   }
@@ -55,7 +57,7 @@ export async function handleBetCallback(ctx: Context): Promise<void> {
     if (!ctx.from) return;
 
     const callbackData = ctx.callbackQuery.data;
-    const matchId = parseInt(callbackData.replace('bet_', ''), 10);
+    const matchId = parseInt(callbackData.replace(`${CALLBACK_PREFIX.BET}_`, ''), 10);
 
     if (isNaN(matchId)) {
       await ctx.answerCbQuery('Invalid match');
@@ -86,14 +88,7 @@ export async function handleBetCallback(ctx: Context): Promise<void> {
       return;
     }
 
-    const matchDate = new Date(match.match_date).toLocaleString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'Asia/Jerusalem',
-    });
+    const matchDate = formatDateTimeWithWeekday(new Date(match.match_date));
 
     // Check if user already has a bet
     const existingBet = await betService.getUserBetForMatch(user.id, matchId);
@@ -191,14 +186,7 @@ Select the score for ${formatTeamWithFlag(match.away_team)} (Away):`,
 ${match.league.name}
 🏠 ${formatTeamWithFlag(match.home_team)} ${homeScore} - ${score} 🛫 ${formatTeamWithFlag(match.away_team)}
 
-📅 ${new Date(match.match_date).toLocaleString('en-US', {
-          weekday: 'short',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'Asia/Jerusalem',
-        })}`,
+📅 ${formatDateTimeWithWeekday(new Date(match.match_date))}`,
         { reply_markup: createBetConfirmationKeyboard(matchId, homeScore, score) }
       );
     }
@@ -516,14 +504,7 @@ Select the score for ${formatTeamWithFlag(match.away_team)} (Away):`,
 ${match.league.name}
 🏠 ${formatTeamWithFlag(match.home_team)} ${homeScore} - ${score} 🛫 ${formatTeamWithFlag(match.away_team)}
 
-📅 ${new Date(match.match_date).toLocaleString('en-US', {
-          weekday: 'short',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'Asia/Jerusalem',
-        })}`,
+📅 ${formatDateTimeWithWeekday(new Date(match.match_date))}`,
         { reply_markup: createBetConfirmationKeyboard(matchId, homeScore, score) }
       );
     }

@@ -4,6 +4,8 @@ import { logger } from '../../utils/logger';
 import { MatchStatus } from '../../types';
 import { createCompletedMatchListKeyboard } from '../keyboards';
 import { formatTeamWithFlag } from '../../utils/flags';
+import { ERROR_MESSAGES, CALLBACK_PREFIX } from '../../constants';
+import { formatDateTimeShort } from '../../utils/date.utils';
 
 export async function handleResults(ctx: Context): Promise<void> {
   try {
@@ -47,7 +49,7 @@ export async function handleResults(ctx: Context): Promise<void> {
   } catch (error) {
     logger.error('Error handling /results', { error });
     await ctx.reply(
-      `❌ Oops! Something went wrong.\n\n` +
+      ERROR_MESSAGES.GENERIC_ERROR +
         `We couldn't load completed matches right now.\n` +
         `Please try tapping the ✅ Completed Matches button again.`
     );
@@ -59,7 +61,7 @@ export async function handleResultDetails(ctx: Context): Promise<void> {
     if (!ctx.callbackQuery || !('data' in ctx.callbackQuery)) return;
 
     const callbackData = ctx.callbackQuery.data;
-    const matchId = parseInt(callbackData.replace('result_', ''), 10);
+    const matchId = parseInt(callbackData.replace(`${CALLBACK_PREFIX.RESULT}_`, ''), 10);
 
     if (isNaN(matchId)) {
       await ctx.answerCbQuery('Invalid match');
@@ -126,13 +128,7 @@ export async function handleResultDetails(ctx: Context): Promise<void> {
       return a.userId - b.userId;
     });
 
-    const matchDate = new Date(match.match_date).toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'Asia/Jerusalem',
-    });
+    const matchDate = formatDateTimeShort(new Date(match.match_date));
 
     let message = `📊 MATCH RESULTS\n`;
     message += `━━━━━━━━━━━━━━━━━━━━\n\n`;

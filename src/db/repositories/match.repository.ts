@@ -1,6 +1,7 @@
 import { db } from '../database';
 import { Match, MatchStatus, MatchWithLeague } from '../../types';
 import { config } from '../../utils/config';
+import { DB_FIELDS } from '../../constants';
 
 interface MatchWithLeagueRow extends Match {
   league_id: number;
@@ -22,11 +23,11 @@ export class MatchRepository {
   async findByIdWithLeague(id: number): Promise<MatchWithLeague | null> {
     const result = await db.query<MatchWithLeagueRow>(
       `SELECT m.*,
-              l.id as league_id, l.api_league_id, l.code as league_code, l.name as league_name,
+              l.id as league_id, l.${DB_FIELDS.API_LEAGUE_ID}, l.code as league_code, l.name as league_name,
               l.country as league_country, l.season as league_season,
               l.is_active as league_is_active, l.logo_url as league_logo_url
        FROM matches m
-       JOIN leagues l ON m.league_id = l.id
+       JOIN leagues l ON m.${DB_FIELDS.LEAGUE_ID} = l.id
        WHERE m.id = $1`,
       [id]
     );
@@ -50,11 +51,11 @@ export class MatchRepository {
     awayScoreFt?: number | null
   ): Promise<Match> {
     const result = await db.query<Match>(
-      `INSERT INTO matches (api_fixture_id, league_id, home_team, away_team, match_date, status,
-                            home_score, away_score, home_score_ft, away_score_ft, updated_at)
+      `INSERT INTO matches (${DB_FIELDS.API_FIXTURE_ID}, ${DB_FIELDS.LEAGUE_ID}, home_team, away_team, match_date, status,
+                            ${DB_FIELDS.HOME_SCORE}, ${DB_FIELDS.AWAY_SCORE}, home_score_ft, away_score_ft, updated_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, CURRENT_TIMESTAMP)
-       ON CONFLICT (api_fixture_id) DO UPDATE
-       SET league_id = EXCLUDED.league_id,
+       ON CONFLICT (${DB_FIELDS.API_FIXTURE_ID}) DO UPDATE
+       SET ${DB_FIELDS.LEAGUE_ID} = EXCLUDED.${DB_FIELDS.LEAGUE_ID},
            home_team = EXCLUDED.home_team,
            away_team = EXCLUDED.away_team,
            match_date = EXCLUDED.match_date,

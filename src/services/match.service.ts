@@ -2,14 +2,7 @@ import { matchRepository } from '../db/repositories';
 import { Match, MatchWithLeague, MatchStatus } from '../types';
 import { logger } from '../utils/logger';
 import { cacheService } from './cache.service';
-
-const CACHE_TTL = {
-  UPCOMING_MATCHES: 5 * 60, // 5 minutes
-  TODAY_MATCHES: 60, // 1 minute (shorter for today's matches)
-  FINISHED_MATCHES: 30 * 60, // 30 minutes
-  MATCH_BY_ID: 5 * 60, // 5 minutes
-  LIVE_MATCHES: 30, // 30 seconds
-};
+import { CACHE_TTL, SERVICE_ERROR_PREFIX } from '../constants';
 
 export class MatchService {
   async getTodayMatches(): Promise<MatchWithLeague[]> {
@@ -28,7 +21,7 @@ export class MatchService {
       cacheService.set(cacheKey, matches, CACHE_TTL.TODAY_MATCHES);
       return matches;
     } catch (error) {
-      logger.error('Failed to get today matches', { error });
+      logger.error(SERVICE_ERROR_PREFIX.FAILED_TO_GET_TODAY_MATCHES, { error });
       throw error;
     }
   }
@@ -49,7 +42,7 @@ export class MatchService {
       cacheService.set(cacheKey, matches, CACHE_TTL.UPCOMING_MATCHES);
       return matches;
     } catch (error) {
-      logger.error('Failed to get upcoming matches', { error });
+      logger.error(SERVICE_ERROR_PREFIX.FAILED_TO_GET_UPCOMING_MATCHES, { error });
       throw error;
     }
   }
@@ -70,7 +63,7 @@ export class MatchService {
       cacheService.set(cacheKey, matches, CACHE_TTL.FINISHED_MATCHES);
       return matches;
     } catch (error) {
-      logger.error('Failed to get recent finished matches', { error });
+      logger.error(SERVICE_ERROR_PREFIX.FAILED_TO_GET_RECENT_FINISHED_MATCHES, { error });
       throw error;
     }
   }

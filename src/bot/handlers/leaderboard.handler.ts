@@ -1,6 +1,7 @@
 import { Context } from 'telegraf';
 import { leaderboardService } from '../../services';
 import { logger } from '../../utils/logger';
+import { ERROR_MESSAGES } from '../../constants';
 
 export async function handleLeaderboard(ctx: Context): Promise<void> {
   try {
@@ -52,7 +53,7 @@ export async function handleLeaderboard(ctx: Context): Promise<void> {
   } catch (error) {
     logger.error('Error handling /leaderboard', { error });
     await ctx.reply(
-      `❌ Oops! Something went wrong.\n\n` +
+      ERROR_MESSAGES.GENERIC_ERROR +
         `We couldn't load the leaderboard right now.\n` +
         `Please try tapping the 🏆 Leaderboard button again.`
     );

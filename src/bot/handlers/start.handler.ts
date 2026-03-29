@@ -3,6 +3,7 @@ import { userService } from '../../services';
 import { logger } from '../../utils/logger';
 import { config } from '../../utils/config';
 import { createMainMenuKeyboard } from '../keyboards';
+import { ERROR_MESSAGES } from '../../constants';
 
 export async function handleStart(ctx: Context): Promise<void> {
   try {
@@ -47,7 +48,7 @@ export async function handleStart(ctx: Context): Promise<void> {
   } catch (error) {
     logger.error('Error handling /start', { error });
     await ctx.reply(
-      `❌ Oops! Something went wrong.\n\n` +
+      ERROR_MESSAGES.GENERIC_ERROR +
         `We couldn't start the bot.\n` +
         `Please try tapping /start again.`
     );

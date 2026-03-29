@@ -1,6 +1,7 @@
 import { leaderboardRepository } from '../db/repositories';
 import { LeaderboardEntry } from '../types';
 import { logger } from '../utils/logger';
+import { SERVICE_ERROR_PREFIX } from '../constants';
 
 export class LeaderboardService {
   async getLeaderboard(limit?: number): Promise<LeaderboardEntry[]> {
@@ -9,7 +10,7 @@ export class LeaderboardService {
       logger.debug(`Retrieved leaderboard with ${leaderboard.length} entries`);
       return leaderboard;
     } catch (error) {
-      logger.error('Failed to get leaderboard', { error });
+      logger.error(SERVICE_ERROR_PREFIX.FAILED_TO_GET_LEADERBOARD, { error });
       throw error;
     }
   }
@@ -19,7 +20,7 @@ export class LeaderboardService {
       const rankInfo = await leaderboardRepository.getUserRank(userId);
       return rankInfo;
     } catch (error) {
-      logger.error('Failed to get user rank', { error, userId });
+      logger.error(SERVICE_ERROR_PREFIX.FAILED_TO_GET_USER_RANK, { error, userId });
       throw error;
     }
   }
