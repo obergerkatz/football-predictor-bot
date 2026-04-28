@@ -149,11 +149,29 @@ export class TelegramBot {
 
   async launch(): Promise<void> {
     try {
-      await this.bot.launch();
+      logger.info('Fetching bot info...');
+      const botInfo = await this.bot.telegram.getMe();
+      logger.info(`Bot info retrieved: @${botInfo.username}`);
+
+      logger.info('Starting long polling...');
+      // Launch returns immediately in newer versions after setting up polling
+      this.bot.launch({
+        dropPendingUpdates: true,
+      });
+
+      // Give it a moment to start
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       logger.info('Telegram bot launched successfully');
-      logger.info(`Bot username: @${this.bot.botInfo?.username}`);
+      logger.info(`Bot username: @${botInfo.username}`);
     } catch (error) {
-      logger.error('Failed to launch bot', { error });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      logger.error('Failed to launch bot', {
+        errorMessage,
+        errorStack,
+        error: JSON.stringify(error, Object.getOwnPropertyNames(error)),
+      });
       throw error;
     }
   }
