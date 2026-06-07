@@ -97,7 +97,6 @@ export class MatchRepository {
       [MatchStatus.SCHEDULED, leagueCodes]
     );
 
-    
     return result.rows.map((row) => this.mapRowWithLeague(row));
   }
 
@@ -116,6 +115,7 @@ export class MatchRepository {
        ORDER BY m.match_date ASC`,
       [MatchStatus.SCHEDULED, leagueCodes]
     );
+    
     return result.rows.map((row) => this.mapRowWithLeague(row));
   }
 
