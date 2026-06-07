@@ -29,7 +29,6 @@ export function createMainMenuKeyboard(isAdmin: boolean = false): {
     reply_markup: {
       keyboard,
       resize_keyboard: true,
-      is_persistent: true,
     },
   };
 }
