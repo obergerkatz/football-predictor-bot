@@ -26,6 +26,27 @@ export class MatchService {
     }
   }
 
+  async getNext24HourMatches(): Promise<MatchWithLeague[]> {
+    try {
+      const cacheKey = 'matches:next24h';
+      const cached = cacheService.get<MatchWithLeague[]>(cacheKey);
+
+      if (cached) {
+        logger.debug('Returning cached next 24h matches');
+        return cached;
+      }
+
+      const matches = await matchRepository.findNext24Hours();
+      logger.debug(`Retrieved ${matches.length} next 24h matches`);
+
+      cacheService.set(cacheKey, matches, CACHE_TTL.TODAY_MATCHES);
+      return matches;
+    } catch (error) {
+      logger.error('Failed to get next 24h matches', { error });
+      throw error;
+    }
+  }
+
   async getUpcomingMatches(): Promise<MatchWithLeague[]> {
     try {
       const cacheKey = 'matches:upcoming';
