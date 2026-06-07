@@ -55,6 +55,7 @@ export enum ScoreType {
   EXACT = 'exact',
   GOAL_DIFF = 'goal_diff',
   PARTIAL = 'partial',
+  CORRECT_RESULT = 'correct_result',
   NONE = 'none',
 }
 

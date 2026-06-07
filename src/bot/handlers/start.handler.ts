@@ -37,6 +37,7 @@ export async function handleStart(ctx: Context): Promise<void> {
       `6pts • Exact score\n` +
       `4pts • Correct goal difference\n` +
       `3pts • One side + result\n` +
+      `2pts • Correct result only\n` +
       `1pt  • One side only\n\n` +
       `🏅 Don't forget to predict\n` +
       `   group qualifiers and top 4\n` +
@@ -79,6 +80,7 @@ export async function handleHelp(ctx: Context): Promise<void> {
       `6pts • Exact score (e.g., 2-1)\n` +
       `4pts • Correct goal difference\n` +
       `3pts • One side + result correct\n` +
+      `2pts • Correct result only\n` +
       `1pt  • One side only correct\n` +
       `0pts • Wrong prediction\n\n` +
       `🏅 BONUS POINTS\n` +

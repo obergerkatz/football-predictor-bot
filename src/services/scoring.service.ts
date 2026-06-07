@@ -81,6 +81,15 @@ export class ScoringService {
       };
     }
 
+    // Correct result only (win/draw/loss) but no score match
+    if (resultMatch) {
+      return {
+        points: SCORING_POINTS.CORRECT_RESULT,
+        type: ScoreType.CORRECT_RESULT,
+        details: 'Correct result only',
+      };
+    }
+
     // No match
     return {
       points: 0,
