@@ -17,6 +17,9 @@ export async function handleStart(ctx: Context): Promise<void> {
     // Create or update user
     await userService.getOrCreateUser(telegramId, username, firstName);
 
+    // Remove any previously persistent keyboard before sending the new one
+    await ctx.reply('👋', { reply_markup: { remove_keyboard: true } });
+
     const welcomeMessage =
       `⚽ FOOTBALL PREDICTOR\n` +
       `━━━━━━━━━━━━━━━━━━━━\n\n` +
