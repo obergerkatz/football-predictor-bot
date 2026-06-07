@@ -3,7 +3,7 @@ import { config } from '../utils/config';
 import { logger } from '../utils/logger';
 import { handleStart, handleHelp } from './handlers/start.handler';
 import { handleTodayMatches } from './handlers/today-matches.handler';
-import { handleMatches } from './handlers/matches.handler';
+import { handleMatches, handleNext24HourMatches } from './handlers/matches.handler';
 import {
   handleBetCallback,
   handleBetInput,
@@ -61,6 +61,7 @@ export class TelegramBot {
     this.bot.command('help', handleHelp);
     this.bot.command('today', handleTodayMatches);
     this.bot.command('matches', handleMatches);
+    this.bot.command('next24h', handleNext24HourMatches);
     this.bot.command('mybets', handleMyBets);
     this.bot.command('me', handleMe);
     this.bot.command('leaderboard', handleLeaderboard);
@@ -78,6 +79,7 @@ export class TelegramBot {
     // Button text handlers (same as commands)
     this.bot.hears('🗓️ Today Matches', handleTodayMatches);
     this.bot.hears('📅 Upcoming Matches', handleMatches);
+    this.bot.hears('⏰ Next 24H Matches', handleNext24HourMatches);
     this.bot.hears('📊 My Stats', handleMe);
     this.bot.hears('🏆 Leaderboard', handleLeaderboard);
     this.bot.hears('✅ Completed Matches', handleResults);
