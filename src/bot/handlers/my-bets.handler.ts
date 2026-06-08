@@ -65,7 +65,7 @@ export async function handleMyBets(ctx: Context): Promise<void> {
     // Show tournament prediction first
     const tournamentPrediction = await tournamentPredictionService.getUserPrediction(user.id);
     if (tournamentPrediction) {
-      message += `🏅 TOP 4 PREDICTION\n`;
+      message += `🏅 TOP 2 PREDICTION\n`;
       message += `━━━━━━━━━━━━━━━━━━━━\n`;
       message += `🥇 1st: ${formatTeamWithFlag(tournamentPrediction.first_place)}\n`;
       message += `🥈 2nd: ${formatTeamWithFlag(tournamentPrediction.second_place)}\n`;
@@ -121,11 +121,11 @@ export async function handleMyBets(ctx: Context): Promise<void> {
         }
       }
 
-      const maxPoints = sortedGroups.length * 4;
+      const maxPoints = sortedGroups.length * 8;
       if (groupStagePrediction.is_scored) {
         message += `✅ Earned: ${groupStagePrediction.bonus_points}/${maxPoints} bonus pts\n`;
       } else {
-        message += `⏳ Pending (2pts each)\n`;
+        message += `⏳ Pending (4pts each, top 2 only)\n`;
       }
       message += '\n';
     } else {
@@ -135,7 +135,7 @@ export async function handleMyBets(ctx: Context): Promise<void> {
         message += `━━━━━━━━━━━━━━━━━━━━\n`;
         message += `Predict group stage qualifiers!\n`;
         message += `Tap ⚽ Group Stage Prediction to predict\n`;
-        message += `which teams advance (2pts each)\n\n`;
+        message += `which teams advance (4pts each, top 2 only)\n\n`;
       }
     }
 
