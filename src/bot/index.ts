@@ -39,6 +39,13 @@ import {
   handleGroupPredictionBack,
 } from './handlers/group-stage-prediction.handler';
 import {
+  handleTopGoalscorerPrediction,
+  handleGoalscorerConfirm,
+  handleGoalscorerCancel,
+  handleGoalscorerModify,
+  handleGoalscorerClose,
+} from './handlers/top-goalscorer-prediction.handler';
+import {
   handleAdminFetchNewMatches,
   handleAdminRefreshMatchesStatuses,
   handleAdminCalculateUserPoints,
@@ -68,6 +75,7 @@ export class TelegramBot {
     this.bot.command('results', handleResults);
     this.bot.command('tournament_prediction', handleTournamentPrediction);
     this.bot.command('group_stage', handleGroupStagePrediction);
+    this.bot.command('top_scorer', handleTopGoalscorerPrediction);
 
     // Admin commands
     this.bot.command('admin_fetch_new_matches', handleAdminFetchNewMatches);
@@ -86,6 +94,7 @@ export class TelegramBot {
     this.bot.hears('🎲 My Bets', handleMyBets);
     this.bot.hears('🏅 Top 4 Prediction', handleTournamentPrediction);
     this.bot.hears('⚽ Group Stage Prediction', handleGroupStagePrediction);
+    this.bot.hears('🥅 Top Goalscorer Prediction', handleTopGoalscorerPrediction);
     this.bot.hears('❓ Help', handleHelp);
 
     // Admin button handlers
@@ -122,6 +131,10 @@ export class TelegramBot {
     this.bot.action('gsp_cancel', handleGroupPredictionCancel);
     this.bot.action('gsp_modify', handleGroupPredictionModify);
     this.bot.action('gsp_close', handleGroupPredictionClose);
+    this.bot.action(/^gs_confirm_.+$/, handleGoalscorerConfirm);
+    this.bot.action('gs_cancel', handleGoalscorerCancel);
+    this.bot.action('gs_modify', handleGoalscorerModify);
+    this.bot.action('gs_close', handleGoalscorerClose);
     this.bot.action('cancel', async (ctx) => {
       await ctx.answerCbQuery('Cancelled');
       await ctx.reply('Action cancelled.');
