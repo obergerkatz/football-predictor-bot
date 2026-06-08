@@ -96,6 +96,7 @@ export interface LeaderboardEntry {
   exact_scores: number;
   goal_diffs: number;
   three_pt_scores: number;
+  two_pt_scores: number;
   one_pt_scores: number;
   zero_scores: number;
   scored_bets: number;
@@ -117,6 +118,7 @@ export interface UserStats {
   exact_scores: number;
   goal_diffs: number;
   three_pt_scores: number;
+  two_pt_scores: number;
   one_pt_scores: number;
   zero_scores: number;
   bonus_points: number;
@@ -128,8 +130,6 @@ export interface TournamentPrediction {
   league_id: number;
   first_place: string;
   second_place: string;
-  third_place: string;
-  fourth_place: string;
   bonus_points: number;
   is_scored: boolean;
   created_at: Date;
