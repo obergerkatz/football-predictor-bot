@@ -40,8 +40,8 @@ export async function handleStart(ctx: Context): Promise<void> {
       `2pts • Correct result only\n` +
       `1pt  • One side only\n\n` +
       `🏅 Don't forget to predict\n` +
-      `   group qualifiers and top 4\n` +
-      `   for bonus points!\n\n` +
+      `   group qualifiers, top 4,\n` +
+      `   and top goalscorer for bonus points!\n\n` +
       `⚠️ Bet only BEFORE kickoff!\n\n` +
       `Good luck! 🍀\n` +
       `━━━━━━━━━━━━━━━━━━━━`;
@@ -93,6 +93,9 @@ export async function handleHelp(ctx: Context): Promise<void> {
       `   7pts per correct position\n` +
       `   Max: 28 bonus points\n` +
       `   Tap 🏅 Top 4 Prediction\n\n` +
+      `3️⃣ Top Goalscorer\n` +
+      `   7pts if correct\n` +
+      `   Tap 🥅 Top Goalscorer Prediction\n\n` +
       `📱 MENU BUTTONS\n` +
       `━━━━━━━━━━━━━━━━━━━━\n` +
       `🗓️ Today Matches\n` +
@@ -112,7 +115,9 @@ export async function handleHelp(ctx: Context): Promise<void> {
       `⚽ Group Stage Prediction\n` +
       `   Predict group qualifiers\n\n` +
       `🏅 Top 4 Prediction\n` +
-      `   Tournament winner prediction\n\n`;
+      `   Tournament winner prediction\n\n` +
+      `🥅 Top Goalscorer Prediction\n` +
+      `   Predict the top goalscorer\n\n`;
 
     if (isAdmin) {
       helpMessage +=
