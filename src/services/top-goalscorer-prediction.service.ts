@@ -1,4 +1,8 @@
-import { topGoalscorerPredictionRepository, matchRepository, leagueRepository } from '../db/repositories';
+import {
+  topGoalscorerPredictionRepository,
+  matchRepository,
+  leagueRepository,
+} from '../db/repositories';
 import { TopGoalscorerPrediction } from '../db/repositories/top-goalscorer-prediction.repository';
 import { footballDataClient } from '../api/football-data.client';
 import { config } from '../utils/config';
@@ -56,7 +60,11 @@ export class TopGoalscorerPredictionService {
     const players = await this.getAvailablePlayers();
     const normalised = input.trim().toLowerCase();
     return players
-      .filter((p) => p.toLowerCase().includes(normalised) || normalised.includes(p.toLowerCase().split(' ')[1] || ''))
+      .filter(
+        (p) =>
+          p.toLowerCase().includes(normalised) ||
+          normalised.includes(p.toLowerCase().split(' ')[1] || '')
+      )
       .slice(0, 5);
   }
 
