@@ -40,7 +40,7 @@ export async function handleStart(ctx: Context): Promise<void> {
       `2pts • Correct result only\n` +
       `1pt  • One side only\n\n` +
       `🏅 Don't forget to predict\n` +
-      `   group qualifiers and top 4\n` +
+      `   group qualifiers and top 2\n` +
       `   for bonus points!\n\n` +
       `⚠️ Bet only BEFORE kickoff!\n\n` +
       `Good luck! 🍀\n` +
@@ -86,17 +86,19 @@ export async function handleHelp(ctx: Context): Promise<void> {
       `🏅 BONUS POINTS\n` +
       `━━━━━━━━━━━━━━━━━━━━\n` +
       `1️⃣ Group Stage Prediction\n` +
-      `   2pts per correct qualifier\n` +
-      `   Max: 48 bonus points (12 groups)\n` +
+      `   4pts per correct qualifier (top 2 only)\n` +
+      `   Max: 96 bonus points (12 groups)\n` +
       `   Tap ⚽ Group Stage Prediction\n\n` +
-      `2️⃣ Top 4 Prediction\n` +
+      `2️⃣ Top 2 Prediction\n` +
       `   7pts per correct position\n` +
-      `   Max: 28 bonus points\n` +
-      `   Tap 🏅 Top 4 Prediction\n\n` +
+      `   Max: 14 bonus points\n` +
+      `   Tap 🏅 Top 2 Prediction\n\n` +
       `📱 MENU BUTTONS\n` +
       `━━━━━━━━━━━━━━━━━━━━\n` +
       `🗓️ Today Matches\n` +
       `   Quick view of today's games & bets\n\n` +
+      `⏰ Next 24H Matches\n` +
+      `   Matches starting in the next 24 hours\n\n` +
       `📅 Upcoming Matches\n` +
       `   View and bet on upcoming games\n\n` +
       `✅ Completed Matches\n` +
@@ -109,7 +111,7 @@ export async function handleHelp(ctx: Context): Promise<void> {
       `   Top players rankings\n\n` +
       `⚽ Group Stage Prediction\n` +
       `   Predict group qualifiers\n\n` +
-      `🏅 Top 4 Prediction\n` +
+      `🏅 Top 2 Prediction\n` +
       `   Tournament winner prediction\n\n`;
 
     if (isAdmin) {
