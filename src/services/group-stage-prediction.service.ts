@@ -271,10 +271,11 @@ export class GroupStagePredictionService {
         const actualTeams = actualQualifiers[group];
         if (!actualTeams) continue;
 
-        // 2 points for each correct qualifier (regardless of position)
+        // 4 points for each correct qualifier (top 2 finishers only)
+        const top2Teams = actualTeams.slice(0, 2);
         for (const predictedTeam of predictedTeams) {
-          if (actualTeams.includes(predictedTeam)) {
-            points += 2;
+          if (top2Teams.includes(predictedTeam)) {
+            points += 4;
           }
         }
       }

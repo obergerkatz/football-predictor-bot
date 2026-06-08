@@ -1,7 +1,7 @@
-import { InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup } from 'telegraf/types';
+import { InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup } from 'telegraf/types';
 import { MatchWithLeague } from '../types';
 import { formatTeamWithFlag } from '../utils/flags';
-import { formatDateTimeShort, formatDateOnly } from '../utils/date.utils';
+import { formatDateOnly, formatDateTimeShort } from '../utils/date.utils';
 import { buildCallbackData } from '../constants';
 
 export function createMainMenuKeyboard(isAdmin: boolean = false): {
@@ -11,9 +11,8 @@ export function createMainMenuKeyboard(isAdmin: boolean = false): {
     [{ text: '🗓️ Today Matches' }, { text: '⏰ Next 24H Matches' }],
     [{ text: '📅 Upcoming Matches' }, { text: '✅ Completed Matches' }],
     [{ text: '🎲 My Bets' }, { text: '📊 My Stats' }],
-    [{ text: '🏆 Leaderboard' }],
     [{ text: '⚽ Group Stage Prediction' }, { text: '🏅 Top 4 Prediction' }],
-    [{ text: '❓ Help' }],
+    [{ text: '🏆 Leaderboard' }, { text: '❓ Help' }],
   ];
 
   // Add admin buttons if user is admin

@@ -53,13 +53,14 @@ export async function handleMe(ctx: Context): Promise<void> {
     message += `🎯 6pts (Exact): ${stats.exact_scores}\n`;
     message += `🎯 4pts (Goal Diff): ${stats.goal_diffs}\n`;
     message += `🎯 3pts (Side+Result): ${stats.three_pt_scores}\n`;
+    message += `🎯 2pts (Result Only): ${stats.two_pt_scores}\n`;
     message += `🎯 1pt (Side Only): ${stats.one_pt_scores}\n`;
     message += `🎯 0pts (Wrong): ${stats.zero_scores}\n`;
 
     // Tournament prediction section
     const tournamentPrediction = await tournamentPredictionService.getUserPrediction(user.id);
     if (tournamentPrediction) {
-      message += `\n🏅 TOP 4 PREDICTION\n`;
+      message += `\n🏅 TOP 2 PREDICTION\n`;
       message += `━━━━━━━━━━━━━━━━━━━━\n`;
       message += `🥇 1st: ${formatTeamWithFlag(tournamentPrediction.first_place)}\n`;
       message += `🥈 2nd: ${formatTeamWithFlag(tournamentPrediction.second_place)}\n`;
@@ -114,11 +115,11 @@ export async function handleMe(ctx: Context): Promise<void> {
         }
       }
 
-      const maxPoints = sortedGroups.length * 4;
+      const maxPoints = sortedGroups.length * 8;
       if (groupStagePrediction.is_scored) {
         message += `✅ Earned: ${groupStagePrediction.bonus_points}/${maxPoints} bonus pts\n`;
       } else {
-        message += `⏳ Pending (2pts each)\n`;
+        message += `⏳ Pending (4pts each, top 2 only)\n`;
       }
     } else {
       const canPlace = await groupStagePredictionService.canPlacePrediction();
@@ -127,7 +128,7 @@ export async function handleMe(ctx: Context): Promise<void> {
         message += `━━━━━━━━━━━━━━━━━━━━\n`;
         message += `Predict group stage qualifiers!\n`;
         message += `Tap ⚽ Group Stage Prediction to predict\n`;
-        message += `which teams advance (2pts each)\n`;
+        message += `which teams advance (4pts each, top 2 only)\n`;
       }
     }
 
