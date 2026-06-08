@@ -14,6 +14,7 @@ export class LeaderboardRepository {
         exact_scores,
         goal_diffs,
         three_pt_scores,
+        two_pt_scores,
         one_pt_scores,
         zero_scores,
         scored_bets,
