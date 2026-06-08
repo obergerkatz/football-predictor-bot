@@ -7,3 +7,4 @@ export * from './leaderboard.service';
 export * from './tournament-prediction.service';
 export * from './group-stage-prediction.service';
 export * from './notification.service';
+export * from './top-goalscorer-prediction.service';
