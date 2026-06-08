@@ -346,6 +346,45 @@ export class FootballDataClient {
       throw error;
     }
   }
+
+  /**
+   * Get all players for a competition by extracting squads from all teams
+   */
+  async getPlayers(competitionCode: string): Promise<string[]> {
+    try {
+      const cacheKey = `fd:players:${competitionCode}`;
+      const cached = cacheService.get<string[]>(cacheKey);
+
+      if (cached) {
+        logger.debug('Returning cached players', { competitionCode });
+        return cached;
+      }
+
+      logger.debug('Fetching players from team squads', { competitionCode });
+
+      const teams = await this.getTeams(competitionCode);
+
+      const players: string[] = [];
+      for (const team of teams as Array<{ squad?: Array<{ name: string }> }>) {
+        if (team.squad && Array.isArray(team.squad)) {
+          for (const player of team.squad) {
+            if (player.name) {
+              players.push(player.name);
+            }
+          }
+        }
+      }
+
+      const uniquePlayers = [...new Set(players)].sort();
+      logger.info(`Fetched ${uniquePlayers.length} players`, { competitionCode });
+
+      cacheService.set(cacheKey, uniquePlayers, CACHE_TTL.TEAMS);
+      return uniquePlayers;
+    } catch (error) {
+      logger.error('Failed to fetch players', { error, competitionCode });
+      return [];
+    }
+  }
 }
 
 export const footballDataClient = new FootballDataClient();
