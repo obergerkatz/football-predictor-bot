@@ -67,9 +67,7 @@ export class TournamentPredictionService {
   async placePrediction(
     userId: number,
     firstPlace: string,
-    secondPlace: string,
-    thirdPlace: string,
-    fourthPlace: string
+    secondPlace: string
   ): Promise<{ success: boolean; prediction?: TournamentPrediction; error?: string }> {
     try {
       // Validate can still place prediction
@@ -79,9 +77,9 @@ export class TournamentPredictionService {
       }
 
       // Validate all teams are different
-      const teams = [firstPlace, secondPlace, thirdPlace, fourthPlace];
+      const teams = [firstPlace, secondPlace];
       const uniqueTeams = new Set(teams);
-      if (uniqueTeams.size !== 4) {
+      if (uniqueTeams.size !== 2) {
         return { success: false, error: 'Each position must have a different team' };
       }
 
@@ -108,25 +106,19 @@ export class TournamentPredictionService {
 
       let prediction: TournamentPrediction;
       if (existing) {
-        // Update existing prediction
         prediction = await tournamentPredictionRepository.update(
           userId,
           leagueId,
           firstPlace,
-          secondPlace,
-          thirdPlace,
-          fourthPlace
+          secondPlace
         );
         logger.info('Tournament prediction updated', { userId, leagueId });
       } else {
-        // Create new prediction
         prediction = await tournamentPredictionRepository.create(
           userId,
           leagueId,
           firstPlace,
-          secondPlace,
-          thirdPlace,
-          fourthPlace
+          secondPlace
         );
         logger.info('Tournament prediction created', { userId, leagueId });
       }
@@ -141,9 +133,7 @@ export class TournamentPredictionService {
   async scorePredictions(
     leagueId: number,
     actualFirstPlace: string,
-    actualSecondPlace: string,
-    actualThirdPlace: string,
-    actualFourthPlace: string
+    actualSecondPlace: string
   ): Promise<void> {
     try {
       const predictions = await tournamentPredictionRepository.getAllByLeague(leagueId);
@@ -155,8 +145,6 @@ export class TournamentPredictionService {
 
         if (prediction.first_place === actualFirstPlace) bonusPoints += 7;
         if (prediction.second_place === actualSecondPlace) bonusPoints += 7;
-        if (prediction.third_place === actualThirdPlace) bonusPoints += 7;
-        if (prediction.fourth_place === actualFourthPlace) bonusPoints += 7;
 
         await tournamentPredictionRepository.updateBonusPoints(
           prediction.user_id,
