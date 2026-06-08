@@ -86,8 +86,8 @@ export async function handleHelp(ctx: Context): Promise<void> {
       `🏅 BONUS POINTS\n` +
       `━━━━━━━━━━━━━━━━━━━━\n` +
       `1️⃣ Group Stage Prediction\n` +
-      `   2pts per correct qualifier\n` +
-      `   Max: 48 bonus points (12 groups)\n` +
+      `   4pts per correct qualifier (top 2 only)\n` +
+      `   Max: 96 bonus points (12 groups)\n` +
       `   Tap ⚽ Group Stage Prediction\n\n` +
       `2️⃣ Top 4 Prediction\n` +
       `   7pts per correct position\n` +
@@ -97,6 +97,8 @@ export async function handleHelp(ctx: Context): Promise<void> {
       `━━━━━━━━━━━━━━━━━━━━\n` +
       `🗓️ Today Matches\n` +
       `   Quick view of today's games & bets\n\n` +
+      `⏰ Next 24H Matches\n` +
+      `   Matches starting in the next 24 hours\n\n` +
       `📅 Upcoming Matches\n` +
       `   View and bet on upcoming games\n\n` +
       `✅ Completed Matches\n` +
