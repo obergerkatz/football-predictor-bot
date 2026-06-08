@@ -12,6 +12,7 @@ export function createMainMenuKeyboard(isAdmin: boolean = false): {
     [{ text: '📅 Upcoming Matches' }, { text: '✅ Completed Matches' }],
     [{ text: '🎲 My Bets' }, { text: '📊 My Stats' }],
     [{ text: '⚽ Group Stage Prediction' }, { text: '🏅 Top 4 Prediction' }],
+    [{ text: '🥅 Top Goalscorer Prediction' }],
     [{ text: '🏆 Leaderboard' }, { text: '❓ Help' }],
   ];
 
@@ -302,6 +303,35 @@ export function createExistingGroupPredictionKeyboard(
     inline_keyboard: [
       [{ text: '✏️ Modify Predictions', callback_data: 'gsp_modify' }],
       [{ text: '❌ Close', callback_data: 'gsp_close' }],
+    ],
+  };
+}
+
+export function createGoalscorerConfirmKeyboard(playerName: string): InlineKeyboardMarkup {
+  return {
+    inline_keyboard: [
+      [
+        {
+          text: '✅ Confirm Prediction',
+          callback_data: `gs_confirm_${playerName}`,
+        },
+      ],
+      [{ text: '❌ Cancel', callback_data: 'gs_cancel' }],
+    ],
+  };
+}
+
+export function createExistingGoalscorerKeyboard(isScored: boolean = false): InlineKeyboardMarkup {
+  if (isScored) {
+    return {
+      inline_keyboard: [[{ text: '❌ Close', callback_data: 'gs_close' }]],
+    };
+  }
+
+  return {
+    inline_keyboard: [
+      [{ text: '✏️ Modify Prediction', callback_data: 'gs_modify' }],
+      [{ text: '❌ Close', callback_data: 'gs_close' }],
     ],
   };
 }
