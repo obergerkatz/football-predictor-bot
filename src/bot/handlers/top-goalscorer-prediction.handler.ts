@@ -239,9 +239,7 @@ export async function handleGoalscorerModify(ctx: Context): Promise<void> {
 
     await ctx.answerCbQuery();
     await ctx.editMessageText(
-      `🥅 TOP GOALSCORER PREDICTION\n` +
-        `━━━━━━━━━━━━━━━━━━━━\n\n` +
-        `Type the new player name:`
+      `🥅 TOP GOALSCORER PREDICTION\n` + `━━━━━━━━━━━━━━━━━━━━\n\n` + `Type the new player name:`
     );
   } catch (error) {
     logger.error('Error modifying goalscorer prediction', { error });
