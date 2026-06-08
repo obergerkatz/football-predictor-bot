@@ -71,7 +71,7 @@ export function createCompletedMatchListKeyboard(matches: MatchWithLeague[]): In
 export function createTeamSelectionKeyboard(
   teams: string[],
   position: 'first' | 'second' | 'third' | 'fourth',
-  excludeTeams: string[] = [],
+  excludeTeams: string[] = []
 ): InlineKeyboardMarkup {
   const availableTeams = teams.filter((team) => !excludeTeams.includes(team));
   const buttons: InlineKeyboardButton[][] = [];
@@ -88,7 +88,7 @@ export function createTeamSelectionKeyboard(
         text: formatTeamWithFlag(availableTeams[i + 1]),
         callback_data: buildCallbackData.tournamentPredictionSelect(
           position,
-          availableTeams[i + 1],
+          availableTeams[i + 1]
         ),
       });
     }
@@ -105,7 +105,7 @@ export function createTournamentPredictionConfirmKeyboard(
   first: string,
   second: string,
   third: string,
-  fourth: string,
+  fourth: string
 ): InlineKeyboardMarkup {
   return {
     inline_keyboard: [
@@ -113,7 +113,7 @@ export function createTournamentPredictionConfirmKeyboard(
         {
           text: '✅ Confirm Prediction',
           callback_data: buildCallbackData.tournamentPredictionConfirm(
-            `${first}_${second}_${third}_${fourth}`,
+            `${first}_${second}_${third}_${fourth}`
           ),
         },
       ],
@@ -124,7 +124,7 @@ export function createTournamentPredictionConfirmKeyboard(
 }
 
 export function createExistingTournamentPredictionKeyboard(
-  isScored: boolean = false,
+  isScored: boolean = false
 ): InlineKeyboardMarkup {
   if (isScored) {
     return {
@@ -152,7 +152,7 @@ export function createCancelKeyboard(): InlineKeyboardMarkup {
 
 export function createScoreSelectionKeyboard(
   matchId: number,
-  team: 'home' | 'away',
+  team: 'home' | 'away'
 ): InlineKeyboardMarkup {
   const scores = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   const rows: InlineKeyboardButton[][] = [];
@@ -178,7 +178,7 @@ export function createScoreSelectionKeyboard(
 export function createBetConfirmationKeyboard(
   matchId: number,
   homeScore: number,
-  awayScore: number,
+  awayScore: number
 ): InlineKeyboardMarkup {
   return {
     inline_keyboard: [
@@ -208,7 +208,7 @@ export function createExistingBetKeyboard(matchId: number): InlineKeyboardMarkup
 
 export function createGroupSelectionKeyboard(
   completedGroups: string[] = [],
-  availableGroups: string[] = [],
+  availableGroups: string[] = []
 ): InlineKeyboardMarkup {
   const buttons: InlineKeyboardButton[][] = [];
 
@@ -243,7 +243,7 @@ export function createGroupTeamSelectionKeyboard(
   teams: string[],
   group: string,
   position: 'first' | 'second',
-  excludeTeams: string[] = [],
+  excludeTeams: string[] = []
 ): InlineKeyboardMarkup {
   const availableTeams = teams.filter((team) => !excludeTeams.includes(team));
   const buttons: InlineKeyboardButton[][] = [];
@@ -256,7 +256,7 @@ export function createGroupTeamSelectionKeyboard(
       callback_data: buildCallbackData.groupStagePredictionSelect(
         group,
         position,
-        availableTeams[i],
+        availableTeams[i]
       ),
     });
     if (i + 1 < availableTeams.length) {
@@ -265,7 +265,7 @@ export function createGroupTeamSelectionKeyboard(
         callback_data: buildCallbackData.groupStagePredictionSelect(
           group,
           position,
-          availableTeams[i + 1],
+          availableTeams[i + 1]
         ),
       });
     }
@@ -290,7 +290,7 @@ export function createGroupPredictionConfirmKeyboard(): InlineKeyboardMarkup {
 }
 
 export function createExistingGroupPredictionKeyboard(
-  isScored: boolean = false,
+  isScored: boolean = false
 ): InlineKeyboardMarkup {
   if (isScored) {
     return {
