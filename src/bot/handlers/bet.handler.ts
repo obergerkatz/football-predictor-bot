@@ -1,7 +1,10 @@
 import { Context } from 'telegraf';
 import { matchService, betService, userService } from '../../services';
 import { logger } from '../../utils/logger';
-import { getGoalscorerSession, handleGoalscorerTextInput } from './top-goalscorer-prediction.handler';
+import {
+  getGoalscorerSession,
+  handleGoalscorerTextInput,
+} from './top-goalscorer-prediction.handler';
 import {
   createScoreSelectionKeyboard,
   createBetConfirmationKeyboard,
