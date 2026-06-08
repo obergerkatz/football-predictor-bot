@@ -19,20 +19,28 @@ export async function handleLeaderboard(ctx: Context): Promise<void> {
     }
 
     // Build header
-    let message = `🏆 <b>LEADERBOARD — Top ${leaderboard.length} Players</b>\n\n`;
+    let message = `🏆 LEADERBOARD\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `Top ${leaderboard.length} Players\n\n`;
 
     // Build entries
     for (const entry of leaderboard) {
       const medal =
         entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : '  ';
       const name = entry.username ? `@${entry.username}` : entry.first_name;
-      const breakdown = `6:${entry.exact_scores} 4:${entry.goal_diffs} 3:${entry.three_pt_scores} 1:${entry.one_pt_scores}`;
-      const bonus = entry.bonus_points > 0 ? ` +${entry.bonus_points}🏅` : '';
 
-      message += `${medal} #${entry.rank} <b>${name} — ${entry.total_points}pts</b> | ${breakdown}${bonus}\n`;
+      message += `${medal} #${entry.rank} ${name}\n`;
+      message += `   📊 ${entry.total_points} pts • ${entry.total_bets} bets • 🎯 | 6:${entry.exact_scores} | 4:${entry.goal_diffs}`;
+
+      if (entry.bonus_points > 0) {
+        message += ` | 🏅 +${entry.bonus_points}`;
+      }
+      message += '\n\n';
     }
 
-    await ctx.reply(message, { parse_mode: 'HTML' });
+    message += `━━━━━━━━━━━━━━━━━━━━`;
+
+    await ctx.reply(message);
 
     logger.debug('Displayed leaderboard', { entryCount: leaderboard.length });
   } catch (error) {
