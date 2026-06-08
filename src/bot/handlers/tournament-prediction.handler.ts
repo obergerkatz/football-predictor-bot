@@ -2,12 +2,12 @@ import { Context } from 'telegraf';
 import { tournamentPredictionService, userService } from '../../services';
 import { logger } from '../../utils/logger';
 import {
+  createExistingTournamentPredictionKeyboard,
   createTeamSelectionKeyboard,
   createTournamentPredictionConfirmKeyboard,
-  createExistingTournamentPredictionKeyboard,
 } from '../keyboards';
 import { formatTeamWithFlag } from '../../utils/flags';
-import { SESSION_TIMEOUT, ERROR_MESSAGES } from '../../constants';
+import { ERROR_MESSAGES, SESSION_TIMEOUT } from '../../constants';
 
 // Session store for tournament prediction flow
 interface TournamentPredictionSession {
@@ -54,11 +54,11 @@ export async function handleTournamentPrediction(ctx: Context): Promise<void> {
     if (!canPlace.allowed) {
       await ctx.reply(
         `🏅 TOP 2 PREDICTION\n` +
-          `━━━━━━━━━━━━━━━━━━━━\n\n` +
-          `❌ ${canPlace.reason}\n\n` +
-          `Predictions must be placed before\n` +
-          `the first match starts.\n` +
-          `━━━━━━━━━━━━━━━━━━━━`
+        `━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `❌ ${canPlace.reason}\n\n` +
+        `Predictions must be placed before\n` +
+        `the first match starts.\n` +
+        `━━━━━━━━━━━━━━━━━━━━`,
       );
       return;
     }
@@ -105,15 +105,15 @@ export async function handleTournamentPrediction(ctx: Context): Promise<void> {
 
     await ctx.reply(
       `🏅 TOP 2 PREDICTION\n` +
-        `━━━━━━━━━━━━━━━━━━━━\n\n` +
-        `Predict the tournament top 2!\n\n` +
-        `📊 SCORING\n` +
-        `━━━━━━━━━━━━━━━━━━━━\n` +
-        `   • 7 pts per correct position\n` +
-        `   • Maximum: 14 bonus points\n\n` +
-        `Select the 1st place team:\n` +
-        `━━━━━━━━━━━━━━━━━━━━`,
-      { reply_markup: createTeamSelectionKeyboard(teams, 'first') }
+      `━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `Predict the tournament top 2!\n\n` +
+      `📊 SCORING\n` +
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      `   • 7 pts per correct position\n` +
+      `   • Maximum: 14 bonus points\n\n` +
+      `Select the 1st place team:\n` +
+      `━━━━━━━━━━━━━━━━━━━━`,
+      { reply_markup: createTeamSelectionKeyboard(teams, 'first') },
     );
 
     logger.debug('Tournament prediction started', { userId: user.id });
@@ -121,8 +121,8 @@ export async function handleTournamentPrediction(ctx: Context): Promise<void> {
     logger.error('Error handling tournament prediction', { error });
     await ctx.reply(
       `❌ Oops! Something went wrong.\n\n` +
-        `We couldn't load the prediction form.\n` +
-        `Please try tapping the 🏅 Top 2 Prediction button again.`
+      `We couldn't load the prediction form.\n` +
+      `Please try tapping the 🏅 Top 2 Prediction button again.`,
     );
   }
 }
@@ -155,15 +155,15 @@ export async function handleTeamSelection(ctx: Context): Promise<void> {
     if (session.modifyingSinglePosition && session.first && session.second) {
       await ctx.editMessageText(
         `🏅 TOP 2 PREDICTION\n` +
-          `━━━━━━━━━━━━━━━━━━━━\n\n` +
-          `UPDATED PREDICTION\n` +
-          `🥇 1st: ${formatTeamWithFlag(session.first)}\n` +
-          `🥈 2nd: ${formatTeamWithFlag(session.second)}\n\n` +
-          `💰 7 points per correct position\n\n` +
-          `Confirm to save your updated prediction!`,
+        `━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `UPDATED PREDICTION\n` +
+        `🥇 1st: ${formatTeamWithFlag(session.first)}\n` +
+        `🥈 2nd: ${formatTeamWithFlag(session.second)}\n\n` +
+        `💰 7 points per correct position\n\n` +
+        `Confirm to save your updated prediction!`,
         {
           reply_markup: createTournamentPredictionConfirmKeyboard(session.first, session.second),
-        }
+        },
       );
       return;
     }
@@ -172,29 +172,29 @@ export async function handleTeamSelection(ctx: Context): Promise<void> {
     if (!session.first) {
       await ctx.editMessageText(
         `🏅 TOP 2 PREDICTION\n` + `━━━━━━━━━━━━━━━━━━━━\n\n` + `Select the 1st place team:`,
-        { reply_markup: createTeamSelectionKeyboard(teams, 'first') }
+        { reply_markup: createTeamSelectionKeyboard(teams, 'first') },
       );
     } else if (!session.second) {
       await ctx.editMessageText(
         `🏅 TOP 2 PREDICTION\n` +
-          `━━━━━━━━━━━━━━━━━━━━\n\n` +
-          `🥇 1st: ${formatTeamWithFlag(session.first!)}\n\n` +
-          `Select the 2nd place team:`,
-        { reply_markup: createTeamSelectionKeyboard(teams, 'second', [session.first!]) }
+        `━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `🥇 1st: ${formatTeamWithFlag(session.first!)}\n\n` +
+        `Select the 2nd place team:`,
+        { reply_markup: createTeamSelectionKeyboard(teams, 'second', [session.first!]) },
       );
     } else {
       // All selections made, show confirmation
       await ctx.editMessageText(
         `🏅 TOP 2 PREDICTION\n` +
-          `━━━━━━━━━━━━━━━━━━━━\n\n` +
-          `YOUR PREDICTION\n` +
-          `🥇 1st: ${formatTeamWithFlag(session.first)}\n` +
-          `🥈 2nd: ${formatTeamWithFlag(session.second)}\n\n` +
-          `💰 7 points per correct position\n\n` +
-          `Confirm to save your prediction!`,
+        `━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `YOUR PREDICTION\n` +
+        `🥇 1st: ${formatTeamWithFlag(session.first)}\n` +
+        `🥈 2nd: ${formatTeamWithFlag(session.second)}\n\n` +
+        `💰 7 points per correct position\n\n` +
+        `Confirm to save your prediction!`,
         {
           reply_markup: createTournamentPredictionConfirmKeyboard(session.first, session.second),
-        }
+        },
       );
     }
 
@@ -225,15 +225,15 @@ export async function handleTournamentPredictionConfirm(ctx: Context): Promise<v
     const result = await tournamentPredictionService.placePrediction(
       session.userId,
       first,
-      second
+      second,
     );
 
     if (!result.success) {
       await ctx.answerCbQuery(`Error: ${result.error}`);
       await ctx.editMessageText(
         `❌ Oops! Something went wrong.\n\n` +
-          `${result.error}\n\n` +
-          `Please try tapping the 🏅 Top 2 Prediction button again.`
+        `${result.error}\n\n` +
+        `Please try tapping the 🏅 Top 2 Prediction button again.`,
       );
       clearTpSession(ctx.from.id);
       return;
@@ -242,16 +242,16 @@ export async function handleTournamentPredictionConfirm(ctx: Context): Promise<v
     await ctx.answerCbQuery('Prediction saved! 🎉');
     await ctx.editMessageText(
       `🏅 TOP 2 PREDICTION\n` +
-        `━━━━━━━━━━━━━━━━━━━━\n\n` +
-        `✅ SAVED SUCCESSFULLY!\n\n` +
-        `YOUR PREDICTION\n` +
-        `━━━━━━━━━━━━━━━━━━━━\n` +
-        `🥇 1st: ${formatTeamWithFlag(first)}\n` +
-        `🥈 2nd: ${formatTeamWithFlag(second)}\n\n` +
-        `💰 7 bonus points per correct position\n` +
-        `🎯 Maximum: 14 points\n\n` +
-        `💡 You can modify until the first match starts\n` +
-        `━━━━━━━━━━━━━━━━━━━━`
+      `━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `✅ SAVED SUCCESSFULLY!\n\n` +
+      `YOUR PREDICTION\n` +
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      `🥇 1st: ${formatTeamWithFlag(first)}\n` +
+      `🥈 2nd: ${formatTeamWithFlag(second)}\n\n` +
+      `💰 7 bonus points per correct position\n` +
+      `🎯 Maximum: 14 points\n\n` +
+      `💡 You can modify until the first match starts\n` +
+      `━━━━━━━━━━━━━━━━━━━━`,
     );
 
     logger.info('Tournament prediction saved', { userId: session.userId });
@@ -282,7 +282,7 @@ export async function handleTournamentPredictionStart(ctx: Context): Promise<voi
     await ctx.answerCbQuery();
     await ctx.editMessageText(
       `🏅 TOP 2 PREDICTION\n` + `━━━━━━━━━━━━━━━━━━━━\n\n` + `Select the 1st place team:`,
-      { reply_markup: createTeamSelectionKeyboard(teams, 'first') }
+      { reply_markup: createTeamSelectionKeyboard(teams, 'first') },
     );
   } catch (error) {
     logger.error('Error restarting tournament prediction', { error });
@@ -299,10 +299,10 @@ export async function handleTournamentPredictionCancel(ctx: Context): Promise<vo
     await ctx.answerCbQuery('Prediction cancelled');
     await ctx.editMessageText(
       `🏅 TOP 2 PREDICTION\n` +
-        `━━━━━━━━━━━━━━━━━━━━\n\n` +
-        `❌ Cancelled\n\n` +
-        `Tap 🏅 Top 2 Prediction to try again.\n` +
-        `━━━━━━━━━━━━━━━━━━━━`
+      `━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `❌ Cancelled\n\n` +
+      `Tap 🏅 Top 2 Prediction to try again.\n` +
+      `━━━━━━━━━━━━━━━━━━━━`,
     );
   } catch (error) {
     logger.error('Error cancelling tournament prediction', { error });
@@ -330,10 +330,10 @@ export async function handleTournamentPredictionModify(ctx: Context): Promise<vo
       await ctx.answerCbQuery(`${canPlace.reason}`);
       await ctx.editMessageText(
         `🏅 TOP 2 PREDICTION\n` +
-          `━━━━━━━━━━━━━━━━━━━━\n\n` +
-          `❌ ${canPlace.reason}\n\n` +
-          `Predictions are now locked.\n` +
-          `━━━━━━━━━━━━━━━━━━━━`
+        `━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `❌ ${canPlace.reason}\n\n` +
+        `Predictions are now locked.\n` +
+        `━━━━━━━━━━━━━━━━━━━━`,
       );
       return;
     }
@@ -357,10 +357,10 @@ export async function handleTournamentPredictionModify(ctx: Context): Promise<vo
       await ctx.answerCbQuery();
       await ctx.editMessageText(
         `🏅 TOP 2 PREDICTION\n` +
-          `━━━━━━━━━━━━━━━━━━━━\n\n` +
-          `Modify your prediction\n\n` +
-          `Select the 1st place team:`,
-        { reply_markup: createTeamSelectionKeyboard(teams, 'first') }
+        `━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `Modify your prediction\n\n` +
+        `Select the 1st place team:`,
+        { reply_markup: createTeamSelectionKeyboard(teams, 'first') },
       );
     } else {
       // Single position modification
@@ -395,11 +395,11 @@ export async function handleTournamentPredictionModify(ctx: Context): Promise<vo
       await ctx.answerCbQuery();
       await ctx.editMessageText(
         `🏅 TOP 2 PREDICTION\n` +
-          `━━━━━━━━━━━━━━━━━━━━\n\n` +
-          `Modify ${positionLabels[position]} place ${positionEmojis[position]}\n\n` +
-          `Current: ${formatTeamWithFlag(session[position]!)}\n\n` +
-          `Select new team:`,
-        { reply_markup: createTeamSelectionKeyboard(teams, position, excludeTeams) }
+        `━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `Modify ${positionLabels[position]} place ${positionEmojis[position]}\n\n` +
+        `Current: ${formatTeamWithFlag(session[position]!)}\n\n` +
+        `Select new team:`,
+        { reply_markup: createTeamSelectionKeyboard(teams, position, excludeTeams) },
       );
     }
 
@@ -422,12 +422,12 @@ export async function handleTournamentPredictionClose(ctx: Context): Promise<voi
     await ctx.answerCbQuery('Closed');
     await ctx.editMessageText(
       `🏅 TOP 2 PREDICTION\n` +
-        `━━━━━━━━━━━━━━━━━━━━\n\n` +
-        `✅ Closed\n\n` +
-        `Tap 🏅 Top 2 Prediction anytime to:\n` +
-        `   • View your prediction\n` +
-        `   • Modify it (before first match)\n` +
-        `━━━━━━━━━━━━━━━━━━━━`
+      `━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `✅ Closed\n\n` +
+      `Tap 🏅 Top 2 Prediction anytime to:\n` +
+      `   • View your prediction\n` +
+      `   • Modify it (before first match)\n` +
+      `━━━━━━━━━━━━━━━━━━━━`,
     );
   } catch (error) {
     logger.error('Error closing tournament prediction', { error });
