@@ -14,15 +14,13 @@ export class TournamentPredictionRepository {
     userId: number,
     leagueId: number,
     firstPlace: string,
-    secondPlace: string,
-    thirdPlace: string,
-    fourthPlace: string
+    secondPlace: string
   ): Promise<TournamentPrediction> {
     const result = await db.query<TournamentPrediction>(
-      `INSERT INTO tournament_predictions (user_id, league_id, first_place, second_place, third_place, fourth_place)
-       VALUES ($1, $2, $3, $4, $5, $6)
+      `INSERT INTO tournament_predictions (user_id, league_id, first_place, second_place)
+       VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [userId, leagueId, firstPlace, secondPlace, thirdPlace, fourthPlace]
+      [userId, leagueId, firstPlace, secondPlace]
     );
     return result.rows[0];
   }
@@ -31,16 +29,14 @@ export class TournamentPredictionRepository {
     userId: number,
     leagueId: number,
     firstPlace: string,
-    secondPlace: string,
-    thirdPlace: string,
-    fourthPlace: string
+    secondPlace: string
   ): Promise<TournamentPrediction> {
     const result = await db.query<TournamentPrediction>(
       `UPDATE tournament_predictions
-       SET first_place = $3, second_place = $4, third_place = $5, fourth_place = $6
+       SET first_place = $3, second_place = $4
        WHERE user_id = $1 AND league_id = $2
        RETURNING *`,
-      [userId, leagueId, firstPlace, secondPlace, thirdPlace, fourthPlace]
+      [userId, leagueId, firstPlace, secondPlace]
     );
     return result.rows[0];
   }
