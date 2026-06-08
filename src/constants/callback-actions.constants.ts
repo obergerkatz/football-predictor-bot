@@ -13,6 +13,7 @@ export const CALLBACK_PREFIX = {
   GROUP_STAGE_PREDICTION_GROUP: 'gsp_group',
   GROUP_STAGE_PREDICTION_SELECT: 'gsp_select',
   RESULT: 'result',
+  TOP_GOALSCORER_CONFIRM: 'gs_confirm',
 } as const;
 
 // Callback data builders
@@ -32,4 +33,6 @@ export const buildCallbackData = {
   groupStagePredictionSelect: (group: string, position: string, team: string) =>
     `${CALLBACK_PREFIX.GROUP_STAGE_PREDICTION_SELECT}_${group}_${position}_${team}`,
   result: (matchId: number) => `${CALLBACK_PREFIX.RESULT}_${matchId}`,
+  topGoalscorerConfirm: (playerName: string) =>
+    `${CALLBACK_PREFIX.TOP_GOALSCORER_CONFIRM}_${playerName}`,
 } as const;

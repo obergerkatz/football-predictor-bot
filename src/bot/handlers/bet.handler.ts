@@ -2,6 +2,10 @@ import { Context } from 'telegraf';
 import { matchService, betService, userService } from '../../services';
 import { logger } from '../../utils/logger';
 import {
+  getGoalscorerSession,
+  handleGoalscorerTextInput,
+} from './top-goalscorer-prediction.handler';
+import {
   createScoreSelectionKeyboard,
   createBetConfirmationKeyboard,
   createExistingBetKeyboard,
@@ -449,6 +453,12 @@ export async function handleBetInput(ctx: Context): Promise<void> {
 
     const userId = ctx.from.id;
     const input = ctx.message.text.trim();
+
+    // Check if user is in goalscorer input session first
+    if (getGoalscorerSession(userId)) {
+      await handleGoalscorerTextInput(ctx);
+      return;
+    }
 
     // Get betting session
     const session = getBetSession(userId);

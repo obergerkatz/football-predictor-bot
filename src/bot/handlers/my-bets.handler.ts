@@ -4,6 +4,7 @@ import {
   userService,
   tournamentPredictionService,
   groupStagePredictionService,
+  topGoalscorerPredictionService,
 } from '../../services';
 import { logger } from '../../utils/logger';
 import { MatchStatus } from '../../types';
@@ -136,6 +137,29 @@ export async function handleMyBets(ctx: Context): Promise<void> {
         message += `Predict group stage qualifiers!\n`;
         message += `Tap ⚽ Group Stage Prediction to predict\n`;
         message += `which teams advance (4pts each, top 2 only)\n\n`;
+      }
+    }
+
+    // Show top goalscorer prediction
+    const goalscorerPrediction = await topGoalscorerPredictionService.getUserPrediction(user.id);
+    if (goalscorerPrediction) {
+      message += `🥅 TOP GOALSCORER\n`;
+      message += `━━━━━━━━━━━━━━━━━━━━\n`;
+      message += `⚽ ${goalscorerPrediction.predicted_player}\n`;
+      if (goalscorerPrediction.is_scored) {
+        message += `✅ Earned: ${goalscorerPrediction.bonus_points}/7 bonus pts\n`;
+      } else {
+        message += `⏳ Pending (7pts if correct)\n`;
+      }
+      message += '\n';
+    } else {
+      const canPlace = await topGoalscorerPredictionService.canPlacePrediction();
+      if (canPlace.allowed) {
+        message += `💡 TIP\n`;
+        message += `━━━━━━━━━━━━━━━━━━━━\n`;
+        message += `Don't miss out on bonus points!\n`;
+        message += `Tap 🥅 Top Goalscorer Prediction to predict\n`;
+        message += `the tournament's top scorer (7pts)\n\n`;
       }
     }
 
