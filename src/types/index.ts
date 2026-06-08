@@ -96,6 +96,7 @@ export interface LeaderboardEntry {
   exact_scores: number;
   goal_diffs: number;
   three_pt_scores: number;
+  two_pt_scores: number;
   one_pt_scores: number;
   zero_scores: number;
   scored_bets: number;
@@ -117,6 +118,7 @@ export interface UserStats {
   exact_scores: number;
   goal_diffs: number;
   three_pt_scores: number;
+  two_pt_scores: number;
   one_pt_scores: number;
   zero_scores: number;
   bonus_points: number;
