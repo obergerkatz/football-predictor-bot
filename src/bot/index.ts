@@ -84,7 +84,7 @@ export class TelegramBot {
     this.bot.hears('🏆 Leaderboard', handleLeaderboard);
     this.bot.hears('✅ Completed Matches', handleResults);
     this.bot.hears('🎲 My Bets', handleMyBets);
-    this.bot.hears('🏅 Top 4 Prediction', handleTournamentPrediction);
+    this.bot.hears('🏅 Top 2 Prediction', handleTournamentPrediction);
     this.bot.hears('⚽ Group Stage Prediction', handleGroupStagePrediction);
     this.bot.hears('❓ Help', handleHelp);
 
@@ -110,8 +110,6 @@ export class TelegramBot {
     this.bot.action('tp_cancel', handleTournamentPredictionCancel);
     this.bot.action('tp_modify_first', handleTournamentPredictionModify);
     this.bot.action('tp_modify_second', handleTournamentPredictionModify);
-    this.bot.action('tp_modify_third', handleTournamentPredictionModify);
-    this.bot.action('tp_modify_fourth', handleTournamentPredictionModify);
     this.bot.action('tp_modify_all', handleTournamentPredictionModify);
     this.bot.action('tp_close', handleTournamentPredictionClose);
     this.bot.action(/^gsp_group_[A-L]$/, handleGroupSelection);
