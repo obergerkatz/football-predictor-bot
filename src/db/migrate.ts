@@ -25,6 +25,8 @@ async function runMigrations() {
       '010_add_league_to_predictions.sql',
       '011_create_notifications.sql',
       '012_add_two_pt_scores_to_leaderboard.sql',
+      '014_create_top_goalscorer_predictions.sql',
+      '015_add_top_goalscorer_to_leaderboard.sql',
     ];
 
     for (const migrationFile of migrations) {
