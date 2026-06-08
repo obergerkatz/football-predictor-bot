@@ -7,3 +7,4 @@ export * from './leaderboard.repository';
 export * from './tournament-prediction.repository';
 export * from './group-stage-prediction.repository';
 export * from './notification.repository';
+export * from './top-goalscorer-prediction.repository';
