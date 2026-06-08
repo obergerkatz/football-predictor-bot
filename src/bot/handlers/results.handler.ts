@@ -5,7 +5,6 @@ import { MatchStatus } from '../../types';
 import { createCompletedMatchListKeyboard } from '../keyboards';
 import { formatTeamWithFlag } from '../../utils/flags';
 import { ERROR_MESSAGES, CALLBACK_PREFIX } from '../../constants';
-import { formatDateTimeShort } from '../../utils/date.utils';
 
 export async function handleResults(ctx: Context): Promise<void> {
   try {
@@ -96,81 +95,86 @@ export async function handleResultDetails(ctx: Context): Promise<void> {
       username: string | null;
       firstName: string;
       prediction: string;
-      points: number;
+      points: number | null;
+      isExact: boolean;
       userId: number;
     }
 
     const betDetails: BetWithUserAndScore[] = [];
 
     for (const bet of bets) {
-      // Fetch user by database ID
       const userResult = await userService.getUserById(bet.user_id);
       if (!userResult) continue;
 
-      // Get score for this bet (if match is finished)
-      const score =
-        match.status === MatchStatus.FINISHED ? await betService.getBetScore(bet.id) : null;
+      // Fetch score with score_type if match is finished
+      let points: number | null = null;
+      let isExact = false;
+      if (match.status === MatchStatus.FINISHED) {
+        const score = await betService.getBetScore(bet.id);
+        if (score) {
+          points = score.points_awarded;
+        }
+        // Check for exact score
+        isExact =
+          bet.predicted_home_score === match.home_score &&
+          bet.predicted_away_score === match.away_score;
+      }
 
       betDetails.push({
         username: userResult.username,
         firstName: userResult.first_name,
         prediction: `${bet.predicted_home_score}-${bet.predicted_away_score}`,
-        points: score?.points_awarded || 0,
+        points,
+        isExact,
         userId: bet.user_id,
       });
     }
 
     // Sort by points (highest first), then by user ID for consistent ordering
     betDetails.sort((a, b) => {
-      if (b.points !== a.points) {
-        return b.points - a.points;
-      }
+      const aPoints = a.points ?? -1;
+      const bPoints = b.points ?? -1;
+      if (bPoints !== aPoints) return bPoints - aPoints;
       return a.userId - b.userId;
     });
 
-    const matchDate = formatDateTimeShort(new Date(match.match_date));
+    // Build header
+    const isLive = match.status === MatchStatus.LIVE;
+    const isFinished = match.status === MatchStatus.FINISHED;
+    const homeFlag = formatTeamWithFlag(match.home_team);
+    const awayFlag = formatTeamWithFlag(match.away_team);
 
-    let message = `📊 MATCH RESULTS\n`;
-    message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
-    message += `${formatTeamWithFlag(match.home_team)} vs ${formatTeamWithFlag(match.away_team)}\n`;
-    message += `🏆 ${match.league.name}\n`;
-    message += `📅 ${matchDate}\n\n`;
+    let message = '';
 
-    if (match.status === MatchStatus.FINISHED && match.home_score !== null) {
-      message += `⚽ FINAL SCORE\n`;
-      message += `━━━━━━━━━━━━━━━━━━━━\n`;
-      message += `${match.home_score} - ${match.away_score}`;
-
+    if (isLive && match.home_score !== null) {
+      message += `🔴 LIVE — ${homeFlag} ${match.home_score}–${match.away_score} ${awayFlag}\n\n`;
+    } else if (isFinished && match.home_score !== null) {
+      let scoreStr = `${match.home_score}–${match.away_score}`;
       if (
         match.home_score_ft !== null &&
         match.away_score_ft !== null &&
         (match.home_score_ft !== match.home_score || match.away_score_ft !== match.away_score)
       ) {
-        message += ` (FT: ${match.home_score_ft}-${match.away_score_ft})`;
+        scoreStr += ` (FT: ${match.home_score_ft}-${match.away_score_ft})`;
       }
-      message += `\n\n`;
-    } else if (match.status === MatchStatus.LIVE && match.home_score !== null) {
-      message += `🔴 LIVE SCORE\n`;
-      message += `━━━━━━━━━━━━━━━━━━━━\n`;
-      message += `${match.home_score} - ${match.away_score}\n\n`;
+      message += `⚽ ${homeFlag} ${scoreStr} ${awayFlag}\n\n`;
+    } else {
+      message += `⚽ ${homeFlag} vs ${awayFlag}\n\n`;
     }
 
-    message += `🎯 ALL PREDICTIONS\n`;
-    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `🎯 Predictions (${betDetails.length})\n`;
 
     for (const bet of betDetails) {
       const userName = bet.username ? `@${bet.username}` : bet.firstName;
       message += `${userName}: ${bet.prediction}`;
 
-      if (match.status === MatchStatus.FINISHED) {
-        message += ` • ${bet.points} pts`;
+      if (isFinished && bet.points !== null) {
+        message += ` • ${bet.points}pts`;
+        if (bet.isExact) message += ` ✅`;
       }
 
       message += `\n`;
     }
-
-    message += `\n📈 Total: ${betDetails.length} prediction${betDetails.length > 1 ? 's' : ''}\n`;
-    message += `━━━━━━━━━━━━━━━━━━━━`;
 
     await ctx.answerCbQuery();
     await ctx.reply(message);
