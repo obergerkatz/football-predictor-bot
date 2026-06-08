@@ -101,7 +101,7 @@ export async function handleGroupStagePrediction(ctx: Context): Promise<void> {
         }
       }
 
-      const maxPoints = sortedGroups.length * 4; // 2 teams per group, 2 points each
+      const maxPoints = sortedGroups.length * 8; // 2 teams per group, 4 points each
       if (existing.is_scored) {
         message += `✅ FINAL SCORE\n`;
         message += `━━━━━━━━━━━━━━━━━━━━\n`;
@@ -109,7 +109,7 @@ export async function handleGroupStagePrediction(ctx: Context): Promise<void> {
       } else {
         message += `⏳ PENDING\n`;
         message += `━━━━━━━━━━━━━━━━━━━━\n`;
-        message += `2 points for each correct qualifier\n`;
+        message += `4 points for each correct qualifier (top 2 only)\n`;
         message += `Maximum: ${maxPoints} bonus points\n\n`;
         message += `💡 You can modify until the first match starts\n`;
       }
@@ -126,7 +126,7 @@ export async function handleGroupStagePrediction(ctx: Context): Promise<void> {
     // Get available groups to calculate max points
     const availableGroups = await groupStagePredictionService.getGroups();
     const allGroups = Object.keys(availableGroups).sort();
-    const maxPoints = allGroups.length * 4;
+    const maxPoints = allGroups.length * 8;
 
     // Create session
     gspSessions.set(ctx.from.id, {
@@ -141,7 +141,7 @@ export async function handleGroupStagePrediction(ctx: Context): Promise<void> {
         `Predict which teams will qualify!\n\n` +
         `📊 SCORING\n` +
         `━━━━━━━━━━━━━━━━━━━━\n` +
-        `   • 2 pts per correct qualifier\n` +
+        `   • 4 pts per correct qualifier (top 2 only)\n` +
         `   • Maximum: ${maxPoints} bonus points\n\n` +
         `Select a group to predict:`,
       { reply_markup: createGroupSelectionKeyboard([], allGroups) }
@@ -276,7 +276,7 @@ export async function handleGroupTeamSelection(ctx: Context): Promise<void> {
       if (completedGroups.length < allGroups.length) {
         message += `\nSelect next group or confirm to save:`;
       } else {
-        message += `\n💰 2 points per correct qualifier\n\n`;
+        message += `\n💰 4 points per correct qualifier (top 2 only)\n\n`;
         message += `All groups completed! Confirm to save:`;
       }
 
@@ -321,7 +321,7 @@ export async function handleGroupPredictionConfirm(ctx: Context): Promise<void> 
     }
 
     const completedGroups = Object.keys(session.predictions).sort();
-    const maxPoints = completedGroups.length * 4;
+    const maxPoints = completedGroups.length * 8;
 
     let message = `⚽ GROUP STAGE PREDICTION\n`;
     message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
@@ -335,7 +335,7 @@ export async function handleGroupPredictionConfirm(ctx: Context): Promise<void> 
       message += `${emoji} Group ${g}: ${formatTeamWithFlag(teams[0])}, ${formatTeamWithFlag(teams[1])}\n`;
     }
 
-    message += `\n💰 2 bonus points per correct qualifier\n`;
+    message += `\n💰 4 bonus points per correct qualifier (top 2 only)\n`;
     message += `🎯 Maximum: ${maxPoints} points\n\n`;
     message += `💡 You can modify until the first match starts\n`;
     message += `━━━━━━━━━━━━━━━━━━━━`;
