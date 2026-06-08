@@ -11,9 +11,8 @@ export function createMainMenuKeyboard(isAdmin: boolean = false): {
     [{ text: '🗓️ Today Matches' }, { text: '⏰ Next 24H Matches' }],
     [{ text: '📅 Upcoming Matches' }, { text: '✅ Completed Matches' }],
     [{ text: '🎲 My Bets' }, { text: '📊 My Stats' }],
-    [{ text: '🏆 Leaderboard' }],
-    [{ text: '⚽ Group Stage Prediction' }, { text: '🏅 Top 4 Prediction' }],
-    [{ text: '❓ Help' }],
+    [{ text: '⚽ Group Stage Prediction' }, { text: '🏅 Top 2 Prediction' }],
+    [{ text: '🏆 Leaderboard' }, { text: '❓ Help' }],
   ];
 
   // Add admin buttons if user is admin
@@ -104,9 +103,7 @@ export function createTeamSelectionKeyboard(
 
 export function createTournamentPredictionConfirmKeyboard(
   first: string,
-  second: string,
-  third: string,
-  fourth: string
+  second: string
 ): InlineKeyboardMarkup {
   return {
     inline_keyboard: [
@@ -114,7 +111,7 @@ export function createTournamentPredictionConfirmKeyboard(
         {
           text: '✅ Confirm Prediction',
           callback_data: buildCallbackData.tournamentPredictionConfirm(
-            `${first}_${second}_${third}_${fourth}`
+            `${first}_${second}`
           ),
         },
       ],
@@ -137,8 +134,6 @@ export function createExistingTournamentPredictionKeyboard(
     inline_keyboard: [
       [{ text: '✏️ Modify 1st Place', callback_data: 'tp_modify_first' }],
       [{ text: '✏️ Modify 2nd Place', callback_data: 'tp_modify_second' }],
-      [{ text: '✏️ Modify 3rd Place', callback_data: 'tp_modify_third' }],
-      [{ text: '✏️ Modify 4th Place', callback_data: 'tp_modify_fourth' }],
       [{ text: '🔄 Modify All', callback_data: 'tp_modify_all' }],
       [{ text: '❌ Close', callback_data: 'tp_close' }],
     ],
