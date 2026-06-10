@@ -36,18 +36,8 @@ export class JobScheduler {
       { scheduled: false }
     );
 
-    // Refresh match statuses job (default: every 5 minutes)
-    const refreshMatchesStatusesCron = cron.schedule(
-      config.jobs.refreshMatchesStatusesCron,
-      async () => {
-        try {
-          await matchUpdateJob.run();
-        } catch (error) {
-          logger.error('Refresh match statuses job error', { error });
-        }
-      },
-      { scheduled: false }
-    );
+    // Refresh match statuses job — self-scheduling at 1 min when live, 5 min otherwise
+    matchUpdateJob.start();
 
     // Calculate user points job (default: every 10 minutes)
     const calculateUserPointsCron = cron.schedule(
@@ -95,7 +85,6 @@ export class JobScheduler {
 
     this.jobs = [
       fetchNewMatchesCron,
-      refreshMatchesStatusesCron,
       calculateUserPointsCron,
       preMatchNotificationCron,
       postMatchNotificationCron,
@@ -106,7 +95,6 @@ export class JobScheduler {
 
     logger.info('Job scheduler started', {
       fetchNewMatchesCron: config.jobs.fetchNewMatchesCron,
-      refreshMatchesStatusesCron: config.jobs.refreshMatchesStatusesCron,
       calculateUserPointsCron: config.jobs.calculateUserPointsCron,
       preMatchNotificationCron: config.jobs.preMatchNotificationCron,
       postMatchNotificationCron: config.jobs.postMatchNotificationCron,
@@ -116,6 +104,7 @@ export class JobScheduler {
   stop(): void {
     logger.info('Stopping job scheduler');
     this.jobs.forEach((job) => job.stop());
+    matchUpdateJob.stop();
   }
 }
 
