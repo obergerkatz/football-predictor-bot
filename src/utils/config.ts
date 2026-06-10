@@ -22,7 +22,6 @@ interface Config {
   };
   jobs: {
     fetchNewMatchesCron: string;
-    refreshMatchesStatusesCron: string;
     calculateUserPointsCron: string;
     preMatchNotificationCron: string;
     postMatchNotificationCron: string;
@@ -85,7 +84,6 @@ export const config: Config = {
   },
   jobs: {
     fetchNewMatchesCron: getEnv('FETCH_NEW_FIXTURES_CRON', '0 */6 * * *'),
-    refreshMatchesStatusesCron: getEnv('REFRESH_MATCHES_STATUSES_CRON', '*/5 * * * *'),
     calculateUserPointsCron: getEnv('CALCULATE_USER_POINTS_CRON', '*/10 * * * *'),
     preMatchNotificationCron: getEnv('PRE_MATCH_NOTIFICATION_CRON', '*/15 * * * *'),
     postMatchNotificationCron: getEnv('POST_MATCH_NOTIFICATION_CRON', '*/15 * * * *'),
