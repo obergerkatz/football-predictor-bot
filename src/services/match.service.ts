@@ -179,7 +179,7 @@ export class MatchService {
   async getMatchesForScoring(): Promise<Match[]> {
     try {
       // Get all finished matches that might have unscored bets
-      const finishedMatches = await matchRepository.findByStatus(MatchStatus.FINISHED);
+      const finishedMatches = await matchRepository.findFinishedWithUnscoredBets();
       logger.debug(`Found ${finishedMatches.length} finished matches for potential scoring`);
       return finishedMatches;
     } catch (error) {

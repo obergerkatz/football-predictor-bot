@@ -164,6 +164,21 @@ export class MatchRepository {
     return result.rows.map((row) => this.mapRowWithLeague(row));
   }
 
+  async findFinishedWithUnscoredBets(): Promise<Match[]> {
+    const result = await db.query<Match>(
+      `SELECT m.* FROM matches m
+       WHERE m.status = $1
+         AND EXISTS (
+           SELECT 1 FROM bets b
+           LEFT JOIN scores s ON s.bet_id = b.id
+           WHERE b.match_id = m.id AND s.id IS NULL
+         )
+       ORDER BY m.match_date ASC`,
+      [MatchStatus.FINISHED]
+    );
+    return result.rows;
+  }
+
   async findLiveAndRecent(): Promise<Match[]> {
     const result = await db.query<Match>(
       `SELECT * FROM matches
