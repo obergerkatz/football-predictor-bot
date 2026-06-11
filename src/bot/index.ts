@@ -90,7 +90,7 @@ export class TelegramBot {
     this.bot.hears('⏰ Next 48H Matches', handleNext48HourMatches);
     this.bot.hears('📊 My Stats', handleMe);
     this.bot.hears('🏆 Leaderboard', handleLeaderboard);
-    this.bot.hears('✅ Completed Matches', handleResults);
+    this.bot.hears('📊 Match Results', handleResults);
     this.bot.hears('🎲 My Bets', handleMyBets);
     this.bot.hears('🏅 Top 4 Prediction', handleTournamentPrediction);
     this.bot.hears('⚽ Group Stage Prediction', handleGroupStagePrediction);

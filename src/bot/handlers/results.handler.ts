@@ -13,7 +13,7 @@ export async function handleResults(ctx: Context): Promise<void> {
 
     if (matches.length === 0) {
       await ctx.reply(
-        `✅ COMPLETED MATCHES\n` +
+        `📊 MATCH RESULTS\n` +
           `━━━━━━━━━━━━━━━━━━━━\n\n` +
           `No results yet!\n\n` +
           `Once matches are played, you'll see:\n` +
@@ -29,7 +29,7 @@ export async function handleResults(ctx: Context): Promise<void> {
     const keyboard = createCompletedMatchListKeyboard(matches);
 
     const message =
-      `✅ COMPLETED MATCHES\n` +
+      `📊 MATCH RESULTS\n` +
       `━━━━━━━━━━━━━━━━━━━━\n\n` +
       `🔍 ${matches.length} match${matches.length > 1 ? 'es' : ''} with results\n\n` +
       `Tap any match to see:\n` +
@@ -50,8 +50,8 @@ export async function handleResults(ctx: Context): Promise<void> {
     logger.error('Error handling /results', { error });
     await ctx.reply(
       ERROR_MESSAGES.GENERIC_ERROR +
-        `We couldn't load completed matches right now.\n` +
-        `Please try tapping the ✅ Completed Matches button again.`
+        `We couldn't load match results right now.\n` +
+        `Please try tapping the 📊 Match Results button again.`
     );
   }
 }
