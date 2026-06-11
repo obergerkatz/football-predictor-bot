@@ -26,23 +26,23 @@ export class MatchService {
     }
   }
 
-  async getNext24HourMatches(): Promise<MatchWithLeague[]> {
+  async getNext48HourMatches(): Promise<MatchWithLeague[]> {
     try {
-      const cacheKey = 'matches:next24h';
+      const cacheKey = 'matches:next48h';
       const cached = cacheService.get<MatchWithLeague[]>(cacheKey);
 
       if (cached) {
-        logger.debug('Returning cached next 24h matches');
+        logger.debug('Returning cached next 48h matches');
         return cached;
       }
 
-      const matches = await matchRepository.findNext24Hours();
-      logger.debug(`Retrieved ${matches.length} next 24h matches`);
+      const matches = await matchRepository.findNext48Hours();
+      logger.debug(`Retrieved ${matches.length} next 48h matches`);
 
       cacheService.set(cacheKey, matches, CACHE_TTL.TODAY_MATCHES);
       return matches;
     } catch (error) {
-      logger.error('Failed to get next 24h matches', { error });
+      logger.error('Failed to get next 48h matches', { error });
       throw error;
     }
   }
