@@ -174,7 +174,7 @@ export async function handleResultDetails(ctx: Context): Promise<void> {
       message += `${userName}: ${bet.prediction}`;
 
       if (match.status === MatchStatus.FINISHED) {
-        message += ` • ${bet.points} pts`;
+        message += bet.points !== null ? ` • ${bet.points} pts` : ` • — pts`;
       }
 
       message += `\n`;

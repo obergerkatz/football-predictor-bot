@@ -100,8 +100,8 @@ export async function handleHelp(ctx: Context): Promise<void> {
       `━━━━━━━━━━━━━━━━━━━━\n` +
       `🗓️ Today Matches\n` +
       `   Quick view of today's games & bets\n\n` +
-      `⏰ Next 24H Matches\n` +
-      `   Matches starting in the next 24 hours\n\n` +
+      `⏰ Next 48H Matches\n` +
+      `   Matches starting in the next 48 hours\n\n` +
       `📅 Upcoming Matches\n` +
       `   View and bet on upcoming games\n\n` +
       `✅ Completed Matches\n` +
