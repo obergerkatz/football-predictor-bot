@@ -9,7 +9,7 @@ export function createMainMenuKeyboard(isAdmin: boolean = false): {
 } {
   const keyboard = [
     [{ text: '🗓️ Today Matches' }, { text: '⏰ Next 48H Matches' }],
-    [{ text: '📅 Upcoming Matches' }, { text: '✅ Completed Matches' }],
+    [{ text: '📅 Upcoming Matches' }, { text: '📊 Match Results' }],
     [{ text: '🎲 My Bets' }, { text: '📊 My Stats' }],
     [{ text: '⚽ Group Stage Prediction' }, { text: '🏅 Top 4 Prediction' }],
     [{ text: '🥅 Top Goalscorer Prediction' }],

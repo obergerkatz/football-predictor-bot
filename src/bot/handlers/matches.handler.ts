@@ -55,7 +55,7 @@ export async function handleMatches(ctx: Context): Promise<void> {
       await ctx.reply(
         `📅 No Upcoming Matches\n\n` +
           `There are no matches available for betting right now.\n\n` +
-          `💡 Check back soon or use the ✅ Completed Matches button to see recent results!`
+          `💡 Check back soon or use the 📊 Match Results button to see recent results!`
       );
       return;
     }

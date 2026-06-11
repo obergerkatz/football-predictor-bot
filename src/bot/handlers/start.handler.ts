@@ -104,8 +104,8 @@ export async function handleHelp(ctx: Context): Promise<void> {
       `   Matches starting in the next 48 hours\n\n` +
       `📅 Upcoming Matches\n` +
       `   View and bet on upcoming games\n\n` +
-      `✅ Completed Matches\n` +
-      `   Results and everyone's bets\n\n` +
+      `📊 Match Results\n` +
+      `   Live scores, results and everyone's bets\n\n` +
       `🎲 My Bets\n` +
       `   See all your predictions\n\n` +
       `📊 My Stats\n` +

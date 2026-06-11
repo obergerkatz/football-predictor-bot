@@ -203,7 +203,8 @@ export class MatchService {
   clearMatchListCaches(): void {
     cacheService.delete('matches:today');
     cacheService.delete('matches:upcoming');
-    // Clear common finished match cache keys
+    cacheService.delete('matches:next48h');
+    cacheService.delete('matches:finished-live:all');
     for (let i = 5; i <= 50; i += 5) {
       cacheService.delete(`matches:finished:${i}`);
       cacheService.delete(`matches:finished-live:${i}`);
