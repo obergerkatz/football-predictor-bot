@@ -5,7 +5,7 @@ import { ERROR_MESSAGES } from '../../constants';
 
 export async function handleLeaderboard(ctx: Context): Promise<void> {
   try {
-    const leaderboard = await leaderboardService.getLeaderboard(15);
+    const leaderboard = await leaderboardService.getLeaderboard();
 
     if (leaderboard.length === 0) {
       await ctx.reply(
@@ -21,7 +21,7 @@ export async function handleLeaderboard(ctx: Context): Promise<void> {
     // Build header
     let message = `🏆 LEADERBOARD\n`;
     message += `━━━━━━━━━━━━━━━━━━━━\n`;
-    message += `Top ${leaderboard.length} Players\n\n`;
+    message += `${leaderboard.length} Players\n\n`;
 
     // Build entries
     for (const entry of leaderboard) {
@@ -40,7 +40,24 @@ export async function handleLeaderboard(ctx: Context): Promise<void> {
 
     message += `━━━━━━━━━━━━━━━━━━━━`;
 
-    await ctx.reply(message);
+    // Split into chunks if message exceeds Telegram's 4096 char limit
+    const MAX_LENGTH = 4096;
+    if (message.length <= MAX_LENGTH) {
+      await ctx.reply(message);
+    } else {
+      const lines = message.split('\n');
+      let chunk = '';
+      for (const line of lines) {
+        if ((chunk + line + '\n').length > MAX_LENGTH) {
+          await ctx.reply(chunk.trimEnd());
+          chunk = '';
+        }
+        chunk += line + '\n';
+      }
+      if (chunk.trim()) {
+        await ctx.reply(chunk.trimEnd());
+      }
+    }
 
     logger.debug('Displayed leaderboard', { entryCount: leaderboard.length });
   } catch (error) {
