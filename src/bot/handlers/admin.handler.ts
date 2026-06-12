@@ -158,7 +158,9 @@ export async function handleAdminTop4Predictions(ctx: Context): Promise<void> {
     const predictions = await tournamentPredictionRepository.getAll();
 
     if (predictions.length === 0) {
-      await ctx.reply('🏅 TOP 4 PREDICTIONS\n━━━━━━━━━━━━━━━━━━━━\n\nNo predictions submitted yet.');
+      await ctx.reply(
+        '🏅 TOP 4 PREDICTIONS\n━━━━━━━━━━━━━━━━━━━━\n\nNo predictions submitted yet.'
+      );
       return;
     }
 
@@ -195,7 +197,9 @@ export async function handleAdminTopScorerPredictions(ctx: Context): Promise<voi
     );
 
     if (predictions.length === 0) {
-      await ctx.reply('🥅 TOP GOALSCORER PREDICTIONS\n━━━━━━━━━━━━━━━━━━━━\n\nNo predictions submitted yet.');
+      await ctx.reply(
+        '🥅 TOP GOALSCORER PREDICTIONS\n━━━━━━━━━━━━━━━━━━━━\n\nNo predictions submitted yet.'
+      );
       return;
     }
 
@@ -229,7 +233,9 @@ export async function handleAdminGroupStagePredictions(ctx: Context): Promise<vo
     const predictions = await groupStagePredictionRepository.getAll();
 
     if (predictions.length === 0) {
-      await ctx.reply('⚽ GROUP STAGE PREDICTIONS\n━━━━━━━━━━━━━━━━━━━━\n\nNo predictions submitted yet.');
+      await ctx.reply(
+        '⚽ GROUP STAGE PREDICTIONS\n━━━━━━━━━━━━━━━━━━━━\n\nNo predictions submitted yet.'
+      );
       return;
     }
 
