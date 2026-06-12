@@ -12,7 +12,7 @@ export function createMainMenuKeyboard(
 } {
   const keyboard = [
     [{ text: '🔴 Live Matches' }, { text: '⏰ Next 48H Matches' }],
-    [{ text: '📅 Upcoming Matches' }, { text: '✅ Completed Matches' }],
+    [{ text: '✅ Completed Matches' }, { text: '📅 Upcoming Matches' }],
     [{ text: '🎲 My Bets' }, { text: '📊 My Stats' }],
   ];
 
