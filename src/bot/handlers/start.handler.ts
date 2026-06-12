@@ -4,6 +4,13 @@ import { logger } from '../../utils/logger';
 import { config } from '../../utils/config';
 import { createMainMenuKeyboard } from '../keyboards';
 import { ERROR_MESSAGES } from '../../constants';
+import { matchRepository } from '../../db/repositories';
+
+async function isTournamentStarted(): Promise<boolean> {
+  const firstMatch = await matchRepository.getFirstMatch();
+  if (!firstMatch) return false;
+  return new Date() >= new Date(firstMatch.match_date);
+}
 
 export async function handleStart(ctx: Context): Promise<void> {
   try {
@@ -13,6 +20,7 @@ export async function handleStart(ctx: Context): Promise<void> {
     const username = ctx.from.username || null;
     const firstName = ctx.from.first_name || 'User';
     const isAdmin = config.admin.telegramIds.includes(telegramId);
+    const tournamentStarted = await isTournamentStarted();
 
     // Create or update user
     await userService.getOrCreateUser(telegramId, username, firstName);
@@ -46,7 +54,7 @@ export async function handleStart(ctx: Context): Promise<void> {
       `Good luck! 🍀\n` +
       `━━━━━━━━━━━━━━━━━━━━`;
 
-    await ctx.reply(welcomeMessage, createMainMenuKeyboard(isAdmin));
+    await ctx.reply(welcomeMessage, createMainMenuKeyboard(isAdmin, tournamentStarted));
 
     logger.info('User started bot', { telegramId, username });
   } catch (error) {
@@ -65,6 +73,7 @@ export async function handleHelp(ctx: Context): Promise<void> {
 
     const telegramId = ctx.from.id.toString();
     const isAdmin = config.admin.telegramIds.includes(telegramId);
+    const tournamentStarted = await isTournamentStarted();
 
     let helpMessage =
       `❓ HELP\n` +
@@ -145,7 +154,7 @@ export async function handleHelp(ctx: Context): Promise<void> {
       `Good luck! 🍀\n` +
       `━━━━━━━━━━━━━━━━━━━━`;
 
-    await ctx.reply(helpMessage, createMainMenuKeyboard(isAdmin));
+    await ctx.reply(helpMessage, createMainMenuKeyboard(isAdmin, tournamentStarted));
   } catch (error) {
     logger.error('Error handling /help', { error });
     await ctx.reply(

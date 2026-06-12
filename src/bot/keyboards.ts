@@ -4,19 +4,27 @@ import { formatTeamWithFlag } from '../utils/flags';
 import { formatDateOnly, formatDateTimeShort } from '../utils/date.utils';
 import { buildCallbackData } from '../constants';
 
-export function createMainMenuKeyboard(isAdmin: boolean = false): {
+export function createMainMenuKeyboard(
+  isAdmin: boolean = false,
+  tournamentStarted: boolean = false
+): {
   reply_markup: ReplyKeyboardMarkup;
 } {
   const keyboard = [
     [{ text: '🗓️ Today Matches' }, { text: '⏰ Next 48H Matches' }],
     [{ text: '📅 Upcoming Matches' }, { text: '📊 Match Results' }],
     [{ text: '🎲 My Bets' }, { text: '📊 My Stats' }],
-    [{ text: '⚽ Group Stage Prediction' }, { text: '🏅 Top 4 Prediction' }],
-    [{ text: '🥅 Top Goalscorer Prediction' }],
-    [{ text: '👀 View Top 4 Predictions' }, { text: '👀 View Top Scorer Predictions' }],
-    [{ text: '👀 View Group Stage Predictions' }],
-    [{ text: '🏆 Leaderboard' }, { text: '❓ Help' }],
   ];
+
+  if (!tournamentStarted) {
+    keyboard.push([{ text: '⚽ Group Stage Prediction' }, { text: '🏅 Top 4 Prediction' }]);
+    keyboard.push([{ text: '🥅 Top Goalscorer Prediction' }]);
+  } else {
+    keyboard.push([{ text: '👀 View Top 4 Predictions' }, { text: '👀 View Top Scorer Predictions' }]);
+    keyboard.push([{ text: '👀 View Group Stage Predictions' }]);
+  }
+
+  keyboard.push([{ text: '🏆 Leaderboard' }, { text: '❓ Help' }]);
 
   // Add admin buttons if user is admin
   if (isAdmin) {
