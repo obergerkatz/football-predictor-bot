@@ -8,6 +8,11 @@ import { telegramBot } from '../index';
 import { createNotificationService } from '../../services/notification.service';
 import { createPreMatchNotificationJob } from '../../jobs/pre-match-notification.job';
 import { createPostMatchNotificationJob } from '../../jobs/post-match-notification.job';
+import { tournamentPredictionRepository } from '../../db/repositories/tournament-prediction.repository';
+import { groupStagePredictionRepository } from '../../db/repositories/group-stage-prediction.repository';
+import { topGoalscorerPredictionRepository } from '../../db/repositories/top-goalscorer-prediction.repository';
+import { userService } from '../../services';
+import { formatTeamWithFlag } from '../../utils/flags';
 
 function isAdmin(telegramId: string): boolean {
   return config.admin.telegramIds.includes(telegramId);
@@ -139,4 +144,133 @@ export async function handleAdminSendPostMatchNotifications(ctx: Context): Promi
     logger.error('Error in admin post-match notifications', { error });
     await ctx.reply('❌ Post-match notifications failed. Check logs for details.');
   }
+}
+
+export async function handleAdminTop4Predictions(ctx: Context): Promise<void> {
+  try {
+    if (!ctx.from) return;
+
+    if (!(await hasTournamentStarted())) {
+      await ctx.reply('⏳ Tournament has not started yet. Predictions are still open.');
+      return;
+    }
+
+    const predictions = await tournamentPredictionRepository.getAll();
+
+    if (predictions.length === 0) {
+      await ctx.reply(
+        '🏅 TOP 4 PREDICTIONS\n━━━━━━━━━━━━━━━━━━━━\n\nNo predictions submitted yet.'
+      );
+      return;
+    }
+
+    let message = `🏅 TOP 4 PREDICTIONS\n━━━━━━━━━━━━━━━━━━━━\n${predictions.length} predictions submitted\n\n`;
+
+    for (const p of predictions) {
+      const user = await userService.getUserById(p.user_id);
+      if (!user) continue;
+      const name = user.username ? `@${user.username}` : user.first_name;
+      message += `${name}\n`;
+      message += `  🥇 ${formatTeamWithFlag(p.first_place)}  🥈 ${formatTeamWithFlag(p.second_place)}  🥉 ${formatTeamWithFlag(p.third_place)}  4️⃣ ${formatTeamWithFlag(p.fourth_place)}\n\n`;
+    }
+
+    message += `━━━━━━━━━━━━━━━━━━━━`;
+    await ctx.reply(message);
+    logger.info('Admin viewed top 4 predictions', { telegramId: ctx.from.id.toString() });
+  } catch (error) {
+    logger.error('Error in admin top 4 predictions', { error });
+    await ctx.reply('❌ Failed to load top 4 predictions. Check logs for details.');
+  }
+}
+
+export async function handleAdminTopScorerPredictions(ctx: Context): Promise<void> {
+  try {
+    if (!ctx.from) return;
+
+    if (!(await hasTournamentStarted())) {
+      await ctx.reply('⏳ Tournament has not started yet. Predictions are still open.');
+      return;
+    }
+
+    const predictions = await topGoalscorerPredictionRepository.getAllByLeague(
+      await getActiveLeagueId()
+    );
+
+    if (predictions.length === 0) {
+      await ctx.reply(
+        '🥅 TOP GOALSCORER PREDICTIONS\n━━━━━━━━━━━━━━━━━━━━\n\nNo predictions submitted yet.'
+      );
+      return;
+    }
+
+    let message = `🥅 TOP GOALSCORER PREDICTIONS\n━━━━━━━━━━━━━━━━━━━━\n${predictions.length} predictions submitted\n\n`;
+
+    for (const p of predictions) {
+      const user = await userService.getUserById(p.user_id);
+      if (!user) continue;
+      const name = user.username ? `@${user.username}` : user.first_name;
+      message += `${name} — ${p.predicted_player}\n`;
+    }
+
+    message += `\n━━━━━━━━━━━━━━━━━━━━`;
+    await ctx.reply(message);
+    logger.info('Admin viewed top scorer predictions', { telegramId: ctx.from.id.toString() });
+  } catch (error) {
+    logger.error('Error in admin top scorer predictions', { error });
+    await ctx.reply('❌ Failed to load top scorer predictions. Check logs for details.');
+  }
+}
+
+export async function handleAdminGroupStagePredictions(ctx: Context): Promise<void> {
+  try {
+    if (!ctx.from) return;
+
+    if (!(await hasTournamentStarted())) {
+      await ctx.reply('⏳ Tournament has not started yet. Predictions are still open.');
+      return;
+    }
+
+    const predictions = await groupStagePredictionRepository.getAll();
+
+    if (predictions.length === 0) {
+      await ctx.reply(
+        '⚽ GROUP STAGE PREDICTIONS\n━━━━━━━━━━━━━━━━━━━━\n\nNo predictions submitted yet.'
+      );
+      return;
+    }
+
+    let message = `⚽ GROUP STAGE PREDICTIONS\n━━━━━━━━━━━━━━━━━━━━\n${predictions.length} predictions submitted\n\n`;
+
+    for (const p of predictions) {
+      const user = await userService.getUserById(p.user_id);
+      if (!user) continue;
+      const name = user.username ? `@${user.username}` : user.first_name;
+      message += `${name}\n`;
+      for (const [group, teams] of Object.entries(p.predictions as Record<string, string[]>)) {
+        message += `  ${group}: ${(teams as string[]).join(', ')}\n`;
+      }
+      message += '\n';
+    }
+
+    message += `━━━━━━━━━━━━━━━━━━━━`;
+    await ctx.reply(message);
+    logger.info('Admin viewed group stage predictions', { telegramId: ctx.from.id.toString() });
+  } catch (error) {
+    logger.error('Error in admin group stage predictions', { error });
+    await ctx.reply('❌ Failed to load group stage predictions. Check logs for details.');
+  }
+}
+
+async function getActiveLeagueId(): Promise<number> {
+  const { leagueRepository } = await import('../../db/repositories');
+  const activeLeagues = await leagueRepository.findActiveByConfiguredLeagues();
+  if (activeLeagues.length === 0) throw new Error('No active league found');
+  return activeLeagues[0].id;
+}
+
+async function hasTournamentStarted(): Promise<boolean> {
+  const { matchRepository } = await import('../../db/repositories');
+  const firstMatch = await matchRepository.getFirstMatch();
+  if (!firstMatch) return false;
+  return new Date() >= new Date(firstMatch.match_date);
 }

@@ -26,6 +26,27 @@ export class MatchService {
     }
   }
 
+  async getLiveMatches(): Promise<MatchWithLeague[]> {
+    try {
+      const cacheKey = 'matches:live';
+      const cached = cacheService.get<MatchWithLeague[]>(cacheKey);
+
+      if (cached) {
+        logger.debug('Returning cached live matches');
+        return cached;
+      }
+
+      const matches = await matchRepository.findLive();
+      logger.debug(`Retrieved ${matches.length} live matches`);
+
+      cacheService.set(cacheKey, matches, CACHE_TTL.LIVE_MATCHES);
+      return matches;
+    } catch (error) {
+      logger.error('Failed to get live matches', { error });
+      throw error;
+    }
+  }
+
   async getNext48HourMatches(): Promise<MatchWithLeague[]> {
     try {
       const cacheKey = 'matches:next48h';
@@ -204,6 +225,7 @@ export class MatchService {
     cacheService.delete('matches:today');
     cacheService.delete('matches:upcoming');
     cacheService.delete('matches:next48h');
+    cacheService.delete('matches:live');
     cacheService.delete('matches:finished-live:all');
     for (let i = 5; i <= 50; i += 5) {
       cacheService.delete(`matches:finished:${i}`);

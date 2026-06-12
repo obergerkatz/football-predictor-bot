@@ -9,11 +9,11 @@ import { formatDateTimeShort } from '../../utils/date.utils';
 
 export async function handleResults(ctx: Context): Promise<void> {
   try {
-    const matches = await matchService.getFinishedAndLiveMatches();
+    const matches = await matchService.getRecentFinishedMatches(20);
 
     if (matches.length === 0) {
       await ctx.reply(
-        `📊 MATCH RESULTS\n` +
+        `✅ COMPLETED MATCHES\n` +
           `━━━━━━━━━━━━━━━━━━━━\n\n` +
           `No results yet!\n\n` +
           `Once matches are played, you'll see:\n` +
@@ -29,7 +29,7 @@ export async function handleResults(ctx: Context): Promise<void> {
     const keyboard = createCompletedMatchListKeyboard(matches);
 
     const message =
-      `📊 MATCH RESULTS\n` +
+      `✅ COMPLETED MATCHES\n` +
       `━━━━━━━━━━━━━━━━━━━━\n\n` +
       `🔍 ${matches.length} match${matches.length > 1 ? 'es' : ''} with results\n\n` +
       `Tap any match to see:\n` +
@@ -50,8 +50,8 @@ export async function handleResults(ctx: Context): Promise<void> {
     logger.error('Error handling /results', { error });
     await ctx.reply(
       ERROR_MESSAGES.GENERIC_ERROR +
-        `We couldn't load match results right now.\n` +
-        `Please try tapping the 📊 Match Results button again.`
+        `We couldn't load completed matches right now.\n` +
+        `Please try tapping the ✅ Completed Matches button again.`
     );
   }
 }
@@ -82,7 +82,7 @@ export async function handleResultDetails(ctx: Context): Promise<void> {
     if (bets.length === 0) {
       await ctx.answerCbQuery();
       await ctx.reply(
-        `📊 MATCH RESULTS\n` +
+        `✅ COMPLETED MATCHES\n` +
           `━━━━━━━━━━━━━━━━━━━━\n\n` +
           `No predictions for this match.\n\n` +
           `Be more active next time! 🎯\n` +
@@ -141,7 +141,8 @@ export async function handleResultDetails(ctx: Context): Promise<void> {
 
     const matchDate = formatDateTimeShort(new Date(match.match_date));
 
-    let message = `📊 MATCH RESULTS\n`;
+    const header = match.status === MatchStatus.LIVE ? `🔴 LIVE MATCHES` : `✅ COMPLETED MATCHES`;
+    let message = `${header}\n`;
     message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
     message += `${formatTeamWithFlag(match.home_team)} vs ${formatTeamWithFlag(match.away_team)}\n`;
     message += `🏆 ${match.league.name}\n`;

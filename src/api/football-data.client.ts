@@ -8,7 +8,7 @@ import { API_TIMEOUT } from '../constants';
 const CACHE_TTL = {
   MATCHES: 60 * 60, // 1 hour
   COMPETITION: 24 * 60 * 60, // 24 hours
-  MATCH_BY_ID: 5 * 60, // 5 minutes
+  MATCH_BY_ID: 30, // 30 seconds — needs to be fresh for live match updates
   STANDINGS: 60 * 60, // 1 hour
   TEAMS: 24 * 60 * 60, // 24 hours
 };
