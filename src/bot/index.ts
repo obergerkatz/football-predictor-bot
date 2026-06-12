@@ -109,9 +109,9 @@ export class TelegramBot {
     this.bot.hears('🤖 Calculate User Points', handleAdminCalculateUserPoints);
     this.bot.hears('🤖 Send Pre-Match Notifications', handleAdminSendPreMatchNotifications);
     this.bot.hears('🤖 Send Post-Match Notifications', handleAdminSendPostMatchNotifications);
-    this.bot.hears('👀 View Top 4 Predictions', handleAdminTop4Predictions);
-    this.bot.hears('👀 View Top Scorer Predictions', handleAdminTopScorerPredictions);
-    this.bot.hears('👀 View Group Stage Predictions', handleAdminGroupStagePredictions);
+    this.bot.hears('👀 Top 4 Predictions', handleAdminTop4Predictions);
+    this.bot.hears('👀 Top Scorer Predictions', handleAdminTopScorerPredictions);
+    this.bot.hears('👀 Group Stage Predictions', handleAdminGroupStagePredictions);
 
     // Callback query handlers
     this.bot.action(/^bet_\d+$/, handleBetCallback);

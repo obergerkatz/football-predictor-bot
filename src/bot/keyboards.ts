@@ -20,8 +20,8 @@ export function createMainMenuKeyboard(
     keyboard.push([{ text: '⚽ Group Stage Prediction' }, { text: '🏅 Top 4 Prediction' }]);
     keyboard.push([{ text: '🥅 Top Goalscorer Prediction' }]);
   } else {
-    keyboard.push([{ text: '👀 View Top 4 Predictions' }, { text: '👀 View Top Scorer Predictions' }]);
-    keyboard.push([{ text: '👀 View Group Stage Predictions' }]);
+    keyboard.push([{ text: '👀 Top 4 Predictions' }, { text: '👀 Top Scorer Predictions' }]);
+    keyboard.push([{ text: '👀 Group Stage Predictions' }]);
   }
 
   keyboard.push([{ text: '🏆 Leaderboard' }, { text: '❓ Help' }]);
