@@ -109,11 +109,29 @@ export class MatchRepository {
               l.is_active as league_is_active, l.logo_url as league_logo_url
        FROM matches m
        JOIN leagues l ON m.league_id = l.id
-       WHERE m.status = $1 AND m.match_date > CURRENT_TIMESTAMP
+       WHERE DATE(m.match_date) >= CURRENT_DATE
          AND m.match_date <= CURRENT_TIMESTAMP + INTERVAL '48 hours'
+         AND l.code = ANY($1::text[])
+       ORDER BY m.match_date ASC`,
+      [leagueCodes]
+    );
+
+    return result.rows.map((row) => this.mapRowWithLeague(row));
+  }
+
+  async findLive(): Promise<MatchWithLeague[]> {
+    const leagueCodes = config.leagues.defaultLeagueIds;
+    const result = await db.query<MatchWithLeagueRow>(
+      `SELECT m.*,
+              l.id as league_id, l.api_league_id, l.code as league_code, l.name as league_name,
+              l.country as league_country, l.season as league_season,
+              l.is_active as league_is_active, l.logo_url as league_logo_url
+       FROM matches m
+       JOIN leagues l ON m.league_id = l.id
+       WHERE m.status = $1
          AND l.code = ANY($2::text[])
        ORDER BY m.match_date ASC`,
-      [MatchStatus.SCHEDULED, leagueCodes]
+      [MatchStatus.LIVE, leagueCodes]
     );
 
     return result.rows.map((row) => this.mapRowWithLeague(row));

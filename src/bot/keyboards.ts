@@ -11,8 +11,8 @@ export function createMainMenuKeyboard(
   reply_markup: ReplyKeyboardMarkup;
 } {
   const keyboard = [
-    [{ text: '🗓️ Today Matches' }, { text: '⏰ Next 48H Matches' }],
-    [{ text: '📅 Upcoming Matches' }, { text: '📊 Match Results' }],
+    [{ text: '🔴 Live Matches' }, { text: '⏰ Next 48H Matches' }],
+    [{ text: '📅 Upcoming Matches' }, { text: '✅ Completed Matches' }],
     [{ text: '🎲 My Bets' }, { text: '📊 My Stats' }],
   ];
 

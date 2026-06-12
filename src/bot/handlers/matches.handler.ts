@@ -22,8 +22,8 @@ export async function handleNext48HourMatches(ctx: Context): Promise<void> {
     const message =
       `⏰ NEXT 48H MATCHES\n` +
       `━━━━━━━━━━━━━━━━━━━━\n\n` +
-      `⚽ ${matches.length} match${matches.length > 1 ? 'es' : ''} in the next 48 hours\n\n` +
-      `🎯 Tap any match below to:\n` +
+      `⚽ ${matches.length} match${matches.length > 1 ? 'es' : ''} today and in the next 48 hours\n\n` +
+      `🎯 Tap any scheduled match below to:\n` +
       `   • Place a new bet\n` +
       `   • Modify an existing bet\n\n` +
       `⏰ Remember: You can only bet before kickoff!\n` +
@@ -55,7 +55,7 @@ export async function handleMatches(ctx: Context): Promise<void> {
       await ctx.reply(
         `📅 No Upcoming Matches\n\n` +
           `There are no matches available for betting right now.\n\n` +
-          `💡 Check back soon or use the 📊 Match Results button to see recent results!`
+          `💡 Check back soon or use the ✅ Completed Matches button to see recent results!`
       );
       return;
     }
