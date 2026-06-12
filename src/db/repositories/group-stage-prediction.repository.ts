@@ -47,6 +47,18 @@ export class GroupStagePredictionRepository {
     return row as GroupStagePrediction;
   }
 
+  async getAll(): Promise<GroupStagePrediction[]> {
+    const result = await db.query<GroupStagePrediction>(
+      'SELECT * FROM group_stage_predictions ORDER BY created_at ASC'
+    );
+    return result.rows.map((row) => {
+      if (typeof row.predictions === 'string') {
+        row.predictions = JSON.parse(row.predictions);
+      }
+      return row;
+    });
+  }
+
   async updateBonusPoints(userId: number, leagueId: number, bonusPoints: number): Promise<void> {
     await db.query(
       `UPDATE group_stage_predictions

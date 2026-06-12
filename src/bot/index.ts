@@ -51,6 +51,9 @@ import {
   handleAdminCalculateUserPoints,
   handleAdminSendPreMatchNotifications,
   handleAdminSendPostMatchNotifications,
+  handleAdminTop4Predictions,
+  handleAdminTopScorerPredictions,
+  handleAdminGroupStagePredictions,
 } from './handlers/admin.handler';
 
 export class TelegramBot {
@@ -83,6 +86,9 @@ export class TelegramBot {
     this.bot.command('admin_calculate_user_points', handleAdminCalculateUserPoints);
     this.bot.command('admin_send_pre_match_notifications', handleAdminSendPreMatchNotifications);
     this.bot.command('admin_send_post_match_notifications', handleAdminSendPostMatchNotifications);
+    this.bot.command('admin_top4_predictions', handleAdminTop4Predictions);
+    this.bot.command('admin_top_scorer_predictions', handleAdminTopScorerPredictions);
+    this.bot.command('admin_group_stage_predictions', handleAdminGroupStagePredictions);
 
     // Button text handlers (same as commands)
     this.bot.hears('🗓️ Today Matches', handleTodayMatches);
