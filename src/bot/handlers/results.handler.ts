@@ -9,7 +9,7 @@ import { formatDateTimeShort } from '../../utils/date.utils';
 
 export async function handleResults(ctx: Context): Promise<void> {
   try {
-    const matches = await matchService.getFinishedAndLiveMatches();
+    const matches = await matchService.getRecentFinishedMatches(20);
 
     if (matches.length === 0) {
       await ctx.reply(
@@ -141,7 +141,8 @@ export async function handleResultDetails(ctx: Context): Promise<void> {
 
     const matchDate = formatDateTimeShort(new Date(match.match_date));
 
-    let message = `✅ COMPLETED MATCHES\n`;
+    const header = match.status === MatchStatus.LIVE ? `🔴 LIVE MATCHES` : `✅ COMPLETED MATCHES`;
+    let message = `${header}\n`;
     message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
     message += `${formatTeamWithFlag(match.home_team)} vs ${formatTeamWithFlag(match.away_team)}\n`;
     message += `🏆 ${match.league.name}\n`;

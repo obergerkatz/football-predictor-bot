@@ -1,41 +1,114 @@
 import { Context } from 'telegraf';
-import { matchService } from '../../services';
+import { matchService, betService, userService } from '../../services';
 import { createMatchListKeyboard } from '../keyboards';
 import { logger } from '../../utils/logger';
-import { ERROR_MESSAGES } from '../../constants';
+import { MatchStatus } from '../../types';
+import { formatTeamWithFlag } from '../../utils/flags';
+import { InlineKeyboardMarkup } from 'telegraf/types';
+import { ERROR_MESSAGES, MATCH_STATUS_DISPLAY } from '../../constants';
+import { formatTime24Hour } from '../../utils/date.utils';
 
 export async function handleNext48HourMatches(ctx: Context): Promise<void> {
   try {
+    if (!ctx.from) return;
+
     const matches = await matchService.getNext48HourMatches();
 
     if (matches.length === 0) {
       await ctx.reply(
         `⏰ No Matches in the Next 48 Hours\n\n` +
-          `There are no matches starting in the next 48 hours.\n\n` +
+          `There are no matches in the next 48 hours.\n\n` +
           `💡 Use 📅 Upcoming Matches to see all future matches!`
       );
       return;
     }
 
-    const keyboard = createMatchListKeyboard(matches);
+    const telegramId = ctx.from.id.toString();
+    const user = await userService.getUserByTelegramId(telegramId);
 
-    const message =
+    let message =
       `⏰ NEXT 48H MATCHES\n` +
       `━━━━━━━━━━━━━━━━━━━━\n\n` +
-      `⚽ ${matches.length} match${matches.length > 1 ? 'es' : ''} today and in the next 48 hours\n\n` +
-      `🎯 Tap any scheduled match below to:\n` +
-      `   • Place a new bet\n` +
-      `   • Modify an existing bet\n\n` +
-      `⏰ Remember: You can only bet before kickoff!\n` +
-      `━━━━━━━━━━━━━━━━━━━━`;
+      `📅 ${matches.length} match${matches.length > 1 ? 'es' : ''}\n\n`;
 
-    await ctx.reply(message, {
-      reply_markup: keyboard,
-    });
+    const bettableMatches = [];
 
-    logger.debug('Displayed next 48h matches list', {
-      userId: ctx.from?.id,
+    for (const match of matches) {
+      const matchTime = formatTime24Hour(new Date(match.match_date));
+
+      let statusEmoji = '';
+      let statusText = '';
+      if (match.status === MatchStatus.LIVE) {
+        statusEmoji = '🔴';
+        statusText = MATCH_STATUS_DISPLAY.LIVE;
+      } else if (match.status === MatchStatus.FINISHED) {
+        statusEmoji = '✅';
+        statusText = 'FT';
+      } else {
+        statusEmoji = '⏰';
+        statusText = matchTime;
+      }
+
+      message += `${statusEmoji} ${formatTeamWithFlag(match.home_team)} vs ${formatTeamWithFlag(match.away_team)}\n`;
+      message += `   ${statusText}`;
+
+      if (match.status === MatchStatus.FINISHED || match.status === MatchStatus.LIVE) {
+        if (match.home_score !== null && match.away_score !== null) {
+          message += ` • Score: ${match.home_score}-${match.away_score}`;
+        }
+      }
+
+      message += '\n';
+
+      if (user) {
+        const existingBet = await betService.getUserBetForMatchWithScore(user.id, match.id);
+        if (existingBet) {
+          message += `   🎲 Your bet: ${existingBet.predicted_home_score}-${existingBet.predicted_away_score}`;
+          if (existingBet.score) {
+            message += ` • ${existingBet.score.points_awarded}pts`;
+          }
+          message += '\n';
+        } else if (match.status === MatchStatus.SCHEDULED && new Date(match.match_date) > new Date()) {
+          message += `   ⚠️ No bet placed yet\n`;
+          bettableMatches.push(match);
+        }
+      }
+
+      message += '\n';
+    }
+
+    message += `━━━━━━━━━━━━━━━━━━━━`;
+
+    let keyboard: InlineKeyboardMarkup | undefined;
+    if (bettableMatches.length > 0) {
+      message += `\n\n📌 Tap a match below to place your bet:`;
+      const buttons = bettableMatches.map((match) => {
+        const matchTime = new Date(match.match_date).toLocaleString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+          timeZone: 'Asia/Jerusalem',
+        });
+        return [
+          {
+            text: `${formatTeamWithFlag(match.home_team)} vs ${formatTeamWithFlag(match.away_team)} - ${matchTime}`,
+            callback_data: `bet_${match.id}`,
+          },
+        ];
+      });
+      keyboard = { inline_keyboard: buttons };
+    }
+
+    if (keyboard) {
+      await ctx.reply(message, { reply_markup: keyboard });
+    } else {
+      await ctx.reply(message);
+    }
+
+    logger.debug('Displayed next 48h matches', {
+      userId: ctx.from.id,
       matchCount: matches.length,
+      bettableCount: bettableMatches.length,
     });
   } catch (error) {
     logger.error('Error handling next 48h matches', { error });

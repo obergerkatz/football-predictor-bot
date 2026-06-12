@@ -1,7 +1,7 @@
 import { Context } from 'telegraf';
 import { matchService } from '../../services';
 import { logger } from '../../utils/logger';
-import { formatTeamWithFlag } from '../../utils/flags';
+import { createCompletedMatchListKeyboard } from '../keyboards';
 import { ERROR_MESSAGES } from '../../constants';
 
 export async function handleLiveMatches(ctx: Context): Promise<void> {
@@ -18,24 +18,18 @@ export async function handleLiveMatches(ctx: Context): Promise<void> {
       return;
     }
 
-    let message =
+    const keyboard = createCompletedMatchListKeyboard(matches);
+
+    const message =
       `🔴 LIVE MATCHES\n` +
       `━━━━━━━━━━━━━━━━━━━━\n\n` +
-      `${matches.length} match${matches.length > 1 ? 'es' : ''} in progress\n\n`;
+      `${matches.length} match${matches.length > 1 ? 'es' : ''} in progress\n\n` +
+      `Tap any match to see:\n` +
+      `   • Live score\n` +
+      `   • Everyone's predictions\n\n` +
+      `━━━━━━━━━━━━━━━━━━━━`;
 
-    for (const match of matches) {
-      message += `🔴 ${formatTeamWithFlag(match.home_team)} vs ${formatTeamWithFlag(match.away_team)}\n`;
-
-      if (match.home_score !== null && match.away_score !== null) {
-        message += `   Score: ${match.home_score} - ${match.away_score}\n`;
-      }
-
-      message += '\n';
-    }
-
-    message += `━━━━━━━━━━━━━━━━━━━━`;
-
-    await ctx.reply(message);
+    await ctx.reply(message, { reply_markup: keyboard });
 
     logger.debug('Displayed live matches', { matchCount: matches.length });
   } catch (error) {
