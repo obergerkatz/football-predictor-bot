@@ -154,6 +154,11 @@ export async function handleAdminTop4Predictions(ctx: Context): Promise<void> {
       return;
     }
 
+    if (!(await hasTournamentStarted())) {
+      await ctx.reply('⏳ Tournament has not started yet. Predictions are still open.');
+      return;
+    }
+
     const predictions = await tournamentPredictionRepository.getAll();
 
     if (predictions.length === 0) {
@@ -185,6 +190,11 @@ export async function handleAdminTopScorerPredictions(ctx: Context): Promise<voi
     if (!ctx.from) return;
     if (!isAdmin(ctx.from.id.toString())) {
       await ctx.reply('You are not authorized to use this command.');
+      return;
+    }
+
+    if (!(await hasTournamentStarted())) {
+      await ctx.reply('⏳ Tournament has not started yet. Predictions are still open.');
       return;
     }
 
@@ -223,6 +233,11 @@ export async function handleAdminGroupStagePredictions(ctx: Context): Promise<vo
       return;
     }
 
+    if (!(await hasTournamentStarted())) {
+      await ctx.reply('⏳ Tournament has not started yet. Predictions are still open.');
+      return;
+    }
+
     const predictions = await groupStagePredictionRepository.getAll();
 
     if (predictions.length === 0) {
@@ -257,4 +272,11 @@ async function getActiveLeagueId(): Promise<number> {
   const activeLeagues = await leagueRepository.findActiveByConfiguredLeagues();
   if (activeLeagues.length === 0) throw new Error('No active league found');
   return activeLeagues[0].id;
+}
+
+async function hasTournamentStarted(): Promise<boolean> {
+  const { matchRepository } = await import('../../db/repositories');
+  const firstMatch = await matchRepository.getFirstMatch();
+  if (!firstMatch) return false;
+  return new Date() >= new Date(firstMatch.match_date);
 }

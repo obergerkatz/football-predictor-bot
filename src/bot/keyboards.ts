@@ -24,6 +24,11 @@ export function createMainMenuKeyboard(isAdmin: boolean = false): {
       { text: '🤖 Send Pre-Match Notifications' },
       { text: '🤖 Send Post-Match Notifications' },
     ]);
+    keyboard.push([
+      { text: '🤖 Top 4 Predictions' },
+      { text: '🤖 Top Scorer Predictions' },
+    ]);
+    keyboard.push([{ text: '🤖 Group Stage Predictions' }]);
   }
 
   return {
