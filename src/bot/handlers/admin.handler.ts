@@ -149,10 +149,6 @@ export async function handleAdminSendPostMatchNotifications(ctx: Context): Promi
 export async function handleAdminTop4Predictions(ctx: Context): Promise<void> {
   try {
     if (!ctx.from) return;
-    if (!isAdmin(ctx.from.id.toString())) {
-      await ctx.reply('You are not authorized to use this command.');
-      return;
-    }
 
     if (!(await hasTournamentStarted())) {
       await ctx.reply('⏳ Tournament has not started yet. Predictions are still open.');
@@ -188,10 +184,6 @@ export async function handleAdminTop4Predictions(ctx: Context): Promise<void> {
 export async function handleAdminTopScorerPredictions(ctx: Context): Promise<void> {
   try {
     if (!ctx.from) return;
-    if (!isAdmin(ctx.from.id.toString())) {
-      await ctx.reply('You are not authorized to use this command.');
-      return;
-    }
 
     if (!(await hasTournamentStarted())) {
       await ctx.reply('⏳ Tournament has not started yet. Predictions are still open.');
@@ -228,10 +220,6 @@ export async function handleAdminTopScorerPredictions(ctx: Context): Promise<voi
 export async function handleAdminGroupStagePredictions(ctx: Context): Promise<void> {
   try {
     if (!ctx.from) return;
-    if (!isAdmin(ctx.from.id.toString())) {
-      await ctx.reply('You are not authorized to use this command.');
-      return;
-    }
 
     if (!(await hasTournamentStarted())) {
       await ctx.reply('⏳ Tournament has not started yet. Predictions are still open.');

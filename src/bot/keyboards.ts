@@ -13,6 +13,8 @@ export function createMainMenuKeyboard(isAdmin: boolean = false): {
     [{ text: '🎲 My Bets' }, { text: '📊 My Stats' }],
     [{ text: '⚽ Group Stage Prediction' }, { text: '🏅 Top 4 Prediction' }],
     [{ text: '🥅 Top Goalscorer Prediction' }],
+    [{ text: '👀 View Top 4 Predictions' }, { text: '👀 View Top Scorer Predictions' }],
+    [{ text: '👀 View Group Stage Predictions' }],
     [{ text: '🏆 Leaderboard' }, { text: '❓ Help' }],
   ];
 
@@ -24,11 +26,6 @@ export function createMainMenuKeyboard(isAdmin: boolean = false): {
       { text: '🤖 Send Pre-Match Notifications' },
       { text: '🤖 Send Post-Match Notifications' },
     ]);
-    keyboard.push([
-      { text: '🤖 Top 4 Predictions' },
-      { text: '🤖 Top Scorer Predictions' },
-    ]);
-    keyboard.push([{ text: '🤖 Group Stage Predictions' }]);
   }
 
   return {
