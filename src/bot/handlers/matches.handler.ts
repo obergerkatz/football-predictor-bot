@@ -68,7 +68,10 @@ export async function handleNext48HourMatches(ctx: Context): Promise<void> {
             message += ` • ${existingBet.score.points_awarded}pts`;
           }
           message += '\n';
-        } else if (match.status === MatchStatus.SCHEDULED && new Date(match.match_date) > new Date()) {
+        } else if (
+          match.status === MatchStatus.SCHEDULED &&
+          new Date(match.match_date) > new Date()
+        ) {
           message += `   ⚠️ No bet placed yet\n`;
           bettableMatches.push(match);
         }
