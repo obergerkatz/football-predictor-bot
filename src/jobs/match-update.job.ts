@@ -4,6 +4,7 @@ import { matchService } from '../services/match.service';
 import { MatchStatus } from '../types';
 import { logger } from '../utils/logger';
 import { cacheService } from '../services/cache.service';
+import { scoringJob } from './scoring.job';
 
 const INTERVAL_LIVE_MS = 60_000;
 const INTERVAL_IDLE_MS = 5 * 60_000;
@@ -91,6 +92,12 @@ export class MatchUpdateJob {
 
             matchService.clearMatchCache(match.id);
             cacheService.delete(`fd:match:${match.api_fixture_id}`);
+
+            if (newStatus === MatchStatus.FINISHED && match.status !== MatchStatus.FINISHED) {
+              scoringJob.run().catch((err) =>
+                logger.error('Failed to run scoring job after match finished', { err })
+              );
+            }
 
             logger.info('Match updated', {
               matchId: match.id,
