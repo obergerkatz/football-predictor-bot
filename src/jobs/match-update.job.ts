@@ -54,56 +54,64 @@ export class MatchUpdateJob {
 
     let updated = 0;
 
-    for (const match of matches) {
-      try {
-        const apiMatch = await footballDataClient.getMatchById(match.api_fixture_id);
+    const results = await Promise.all(
+      matches.map(async (match) => {
+        try {
+          const apiMatch = await footballDataClient.getMatchById(match.api_fixture_id);
 
-        if (!apiMatch) {
-          logger.warn(`Match not found in API`, { apiFixtureId: match.api_fixture_id });
-          continue;
+          if (!apiMatch) {
+            logger.warn(`Match not found in API`, { apiFixtureId: match.api_fixture_id });
+            return 0;
+          }
+
+          const newStatus = footballDataClient.mapStatusToMatchStatus(apiMatch.status);
+          const score90min = footballDataClient.get90MinuteScore(apiMatch);
+          const scoreFt = footballDataClient.getFullTimeScore(apiMatch);
+
+          const statusChanged = match.status !== newStatus;
+          const scoresChanged =
+            match.home_score !== score90min.home ||
+            match.away_score !== score90min.away ||
+            match.home_score_ft !== scoreFt.home ||
+            match.away_score_ft !== scoreFt.away;
+
+          if (statusChanged || scoresChanged) {
+            await matchRepository.upsert(
+              apiMatch.id,
+              match.league_id,
+              apiMatch.homeTeam.name,
+              apiMatch.awayTeam.name,
+              new Date(apiMatch.utcDate),
+              newStatus,
+              score90min.home,
+              score90min.away,
+              scoreFt.home,
+              scoreFt.away
+            );
+
+            matchService.clearMatchCache(match.id);
+            cacheService.delete(`fd:match:${match.api_fixture_id}`);
+
+            logger.info('Match updated', {
+              matchId: match.id,
+              apiFixtureId: match.api_fixture_id,
+              oldStatus: match.status,
+              newStatus,
+              score: score90min.home !== null ? `${score90min.home}-${score90min.away}` : 'N/A',
+            });
+
+            return 1;
+          }
+          return 0;
+        } catch (error) {
+          logger.error(`Failed to update match`, { error, matchId: match.id });
+          return 0;
         }
+      })
+    );
 
-        const newStatus = footballDataClient.mapStatusToMatchStatus(apiMatch.status);
-        const score90min = footballDataClient.get90MinuteScore(apiMatch);
-        const scoreFt = footballDataClient.getFullTimeScore(apiMatch);
-
-        const statusChanged = match.status !== newStatus;
-        const scoresChanged =
-          match.home_score !== score90min.home ||
-          match.away_score !== score90min.away ||
-          match.home_score_ft !== scoreFt.home ||
-          match.away_score_ft !== scoreFt.away;
-
-        if (statusChanged || scoresChanged) {
-          await matchRepository.upsert(
-            apiMatch.id,
-            match.league_id,
-            apiMatch.homeTeam.name,
-            apiMatch.awayTeam.name,
-            new Date(apiMatch.utcDate),
-            newStatus,
-            score90min.home,
-            score90min.away,
-            scoreFt.home,
-            scoreFt.away
-          );
-
-          matchService.clearMatchCache(match.id);
-          cacheService.delete(`fd:match:${match.api_fixture_id}`);
-
-          logger.info('Match updated', {
-            matchId: match.id,
-            apiFixtureId: match.api_fixture_id,
-            oldStatus: match.status,
-            newStatus,
-            score: score90min.home !== null ? `${score90min.home}-${score90min.away}` : 'N/A',
-          });
-
-          updated++;
-        }
-      } catch (error) {
-        logger.error(`Failed to update match`, { error, matchId: match.id });
-      }
+    for (const r of results) {
+      updated += r;
     }
 
     if (updated > 0) {
