@@ -6,7 +6,7 @@ import { MatchStatus } from '../../types';
 import { formatTeamWithFlag } from '../../utils/flags';
 import { InlineKeyboardMarkup } from 'telegraf/types';
 import { ERROR_MESSAGES, MATCH_STATUS_DISPLAY } from '../../constants';
-import { formatTime24Hour } from '../../utils/date.utils';
+import { formatTime24Hour, formatDateOnly } from '../../utils/date.utils';
 
 export async function handleNext48HourMatches(ctx: Context): Promise<void> {
   try {
@@ -46,7 +46,7 @@ export async function handleNext48HourMatches(ctx: Context): Promise<void> {
         statusText = 'FT';
       } else {
         statusEmoji = '⏰';
-        statusText = matchTime;
+        statusText = `${formatDateOnly(new Date(match.match_date))}, ${matchTime}`;
       }
 
       message += `${statusEmoji} ${formatTeamWithFlag(match.home_team)} vs ${formatTeamWithFlag(match.away_team)}\n`;
@@ -62,16 +62,17 @@ export async function handleNext48HourMatches(ctx: Context): Promise<void> {
 
       if (user) {
         const existingBet = await betService.getUserBetForMatchWithScore(user.id, match.id);
+        const isBettable =
+          match.status === MatchStatus.SCHEDULED && new Date(match.match_date) > new Date();
+
         if (existingBet) {
           message += `   🎲 Your bet: ${existingBet.predicted_home_score}-${existingBet.predicted_away_score}`;
           if (existingBet.score) {
             message += ` • ${existingBet.score.points_awarded}pts`;
           }
           message += '\n';
-        } else if (
-          match.status === MatchStatus.SCHEDULED &&
-          new Date(match.match_date) > new Date()
-        ) {
+          if (isBettable) bettableMatches.push(match);
+        } else if (isBettable) {
           message += `   ⚠️ No bet placed yet\n`;
           bettableMatches.push(match);
         }
@@ -86,15 +87,12 @@ export async function handleNext48HourMatches(ctx: Context): Promise<void> {
     if (bettableMatches.length > 0) {
       message += `\n\n📌 Tap a match below to place your bet:`;
       const buttons = bettableMatches.map((match) => {
-        const matchTime = new Date(match.match_date).toLocaleString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false,
-          timeZone: 'Asia/Jerusalem',
-        });
+        const matchDate = new Date(match.match_date);
+        const matchTime = formatTime24Hour(matchDate);
+        const matchDateLabel = formatDateOnly(matchDate);
         return [
           {
-            text: `${formatTeamWithFlag(match.home_team)} vs ${formatTeamWithFlag(match.away_team)} - ${matchTime}`,
+            text: `${formatTeamWithFlag(match.home_team)} vs ${formatTeamWithFlag(match.away_team)} - ${matchDateLabel}, ${matchTime}`,
             callback_data: `bet_${match.id}`,
           },
         ];

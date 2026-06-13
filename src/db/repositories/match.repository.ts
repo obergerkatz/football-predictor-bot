@@ -200,7 +200,8 @@ export class MatchRepository {
   async findLiveAndRecent(): Promise<Match[]> {
     const result = await db.query<Match>(
       `SELECT * FROM matches
-       WHERE status IN ($1, $2)
+       WHERE status = $1
+          OR (status = $2 AND match_date BETWEEN CURRENT_TIMESTAMP - INTERVAL '2 hours' AND CURRENT_TIMESTAMP + INTERVAL '2 hours')
           OR (status = $3 AND match_date > CURRENT_TIMESTAMP - INTERVAL '2 hours')
        ORDER BY match_date ASC`,
       [MatchStatus.LIVE, MatchStatus.SCHEDULED, MatchStatus.FINISHED]
