@@ -62,16 +62,17 @@ export async function handleNext48HourMatches(ctx: Context): Promise<void> {
 
       if (user) {
         const existingBet = await betService.getUserBetForMatchWithScore(user.id, match.id);
+        const isBettable =
+          match.status === MatchStatus.SCHEDULED && new Date(match.match_date) > new Date();
+
         if (existingBet) {
           message += `   🎲 Your bet: ${existingBet.predicted_home_score}-${existingBet.predicted_away_score}`;
           if (existingBet.score) {
             message += ` • ${existingBet.score.points_awarded}pts`;
           }
           message += '\n';
-        } else if (
-          match.status === MatchStatus.SCHEDULED &&
-          new Date(match.match_date) > new Date()
-        ) {
+          if (isBettable) bettableMatches.push(match);
+        } else if (isBettable) {
           message += `   ⚠️ No bet placed yet\n`;
           bettableMatches.push(match);
         }
