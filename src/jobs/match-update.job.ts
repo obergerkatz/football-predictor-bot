@@ -94,9 +94,11 @@ export class MatchUpdateJob {
             cacheService.delete(`fd:match:${match.api_fixture_id}`);
 
             if (newStatus === MatchStatus.FINISHED && match.status !== MatchStatus.FINISHED) {
-              scoringJob.run().catch((err) =>
-                logger.error('Failed to run scoring job after match finished', { err })
-              );
+              scoringJob
+                .run()
+                .catch((err) =>
+                  logger.error('Failed to run scoring job after match finished', { err })
+                );
             }
 
             logger.info('Match updated', {
