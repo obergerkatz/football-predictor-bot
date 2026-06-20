@@ -12,7 +12,8 @@ export async function handleNext48HourMatches(ctx: Context): Promise<void> {
   try {
     if (!ctx.from) return;
 
-    const matches = await matchService.getNext48HourMatches();
+    const allMatches = await matchService.getNext48HourMatches();
+    const matches = allMatches.filter((m) => m.status !== MatchStatus.FINISHED);
 
     if (matches.length === 0) {
       await ctx.reply(
