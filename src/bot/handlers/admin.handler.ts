@@ -239,21 +239,35 @@ export async function handleAdminGroupStagePredictions(ctx: Context): Promise<vo
       return;
     }
 
-    let message = `⚽ GROUP STAGE PREDICTIONS\n━━━━━━━━━━━━━━━━━━━━\n${predictions.length} predictions submitted\n\n`;
+    const TELEGRAM_MSG_LIMIT = 4000;
+    const header = `⚽ GROUP STAGE PREDICTIONS\n━━━━━━━━━━━━━━━━━━━━\n${predictions.length} predictions submitted\n\n`;
+    const chunks: string[] = [];
+    let current = header;
 
     for (const p of predictions) {
       const user = await userService.getUserById(p.user_id);
       if (!user) continue;
       const name = user.username ? `@${user.username}` : user.first_name;
-      message += `${name}\n`;
+      let block = `${name}\n`;
       for (const [group, teams] of Object.entries(p.predictions as Record<string, string[]>)) {
-        message += `  ${group}: ${(teams as string[]).join(', ')}\n`;
+        block += `  ${group}: ${(teams as string[]).join(', ')}\n`;
       }
-      message += '\n';
+      block += '\n';
+
+      if (current.length + block.length > TELEGRAM_MSG_LIMIT) {
+        chunks.push(current);
+        current = block;
+      } else {
+        current += block;
+      }
     }
 
-    message += `━━━━━━━━━━━━━━━━━━━━`;
-    await ctx.reply(message);
+    current += `━━━━━━━━━━━━━━━━━━━━`;
+    chunks.push(current);
+
+    for (const chunk of chunks) {
+      await ctx.reply(chunk);
+    }
     logger.info('Admin viewed group stage predictions', { telegramId: ctx.from.id.toString() });
   } catch (error) {
     logger.error('Error in admin group stage predictions', { error });
